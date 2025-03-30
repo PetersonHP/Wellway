@@ -1,0 +1,5 @@
+pull entre names, portions,
+prot, fat-T, carbs, fiber, potassium, cholesterol, calories, sugar, sodium, A-IU, Vitamin C
+% intake on the macros
+
+scrape? API?
