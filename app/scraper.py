@@ -16,6 +16,8 @@ DHALL_ARGS = {
     'yeh': ['06', 'Yeh College & New College West']
 }
 
+# prototype to get today's menu items for a dining hall and a meal
+# this will eventually be converted into a method to get menu items and nutritional info
 def main():
     # parse and validate args
     parser = argparse.ArgumentParser(
