@@ -10,7 +10,7 @@ import pandas as pd
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions
+from selenium.webdriver.support import expected_conditions as EC
 import urllib
 
 
@@ -53,7 +53,9 @@ def _get_nut_rpt(form_url: str) -> str:
     driver = webdriver.Chrome()
 
     driver.get(form_url)
-    driver.implicitly_wait(10)
+    WebDriverWait(driver, 10).until(
+        EC.presence_of_element_located((By.ID, "pickMenuTable"))
+    )
 
     # check boxes
     checkboxes = driver.find_elements(By.NAME, "recipe")
@@ -65,13 +67,33 @@ def _get_nut_rpt(form_url: str) -> str:
     submit = driver.find_element(By.XPATH, "//input[@type='submit']")
     submit.click()
     WebDriverWait(driver, 10).until(
-        expected_conditions.presence_of_element_located((By.TAG_NAME, "body"))
+        EC.presence_of_element_located((By.CLASS_NAME, "nutrptbody"))
     )
 
-    raw_report = driver.page_source
+    raw_report = driver.page_source     # TODO: figure out how to fix encoding issues
     driver.quit()
 
     return raw_report
+
+
+def _parse_nut_rpt(raw: str) -> pd.DataFrame | None:
+    '''
+    Parses a raw html nutrition report into a dataframe
+    '''
+    COL_TITLES = ['Recipe', 'Portion', 'Protein (g)', 'Fat-T (g)',
+                  'Carbohydrates (g)', 'Fiber (g)', 'Potassium (mg)',
+                  'Cholesterol (mg)', 'Calories (kcal)', 'Sugar (g)',
+                  'Sodium (mg)', 'A-IU (IU)', 'Vitamin C (mg)']
+    result_df = pd.DataFrame(columns=COL_TITLES)
+
+    soup = BeautifulSoup(raw, 'html.parser')
+    nutrition_data_raw = soup.find_all('table')[1]
+
+    for row in nutrition_data_raw.find_all('tr'):
+        # TODO: build row and put it into result_df
+        pass
+
+    return None
 
 
 def main():
@@ -103,8 +125,7 @@ def main():
 
     # build the URL
     full_url = _get_dining_url(location, meal, todays_date)
-    soup = BeautifulSoup(_get_nut_rpt(full_url), 'html.parser')
-    print(soup.prettify())
+    _parse_nut_rpt(_get_nut_rpt(full_url))
 
 
 if __name__ == '__main__':
