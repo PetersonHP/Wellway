@@ -3,3 +3,12 @@ prot, fat-T, carbs, fiber, potassium, cholesterol, calories, sugar, sodium, A-IU
 % intake on the macros
 
 scrape? API?
+
+
+find all div of these class
+div class=pickmenucolmenucat - label
+
+div class=pickmenucoldispname - item
+
+https://menus.princeton.edu/dining/_Foodpro/online-menu/pickMenu.asp?locationNum=01&locationName=Rockefeller+%26+Mathey+Colleges&dtdate=03%2F31%2F2025&mealName=Lunch&sName=Princeton+University+Campus+Dining
+https://menus.princeton.edu/dining/_Foodpro/online-menu/nutRpt.asp?locationNum=01&locationName=Rockefeller+%26+Mathey+Colleges&dtdate=03%2F31%2F2025&mealName=Lunch&sName=Princeton+University+Campus+Dining
