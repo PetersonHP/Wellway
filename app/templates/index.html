@@ -7,9 +7,36 @@
         <link rel="stylesheet" href="/static/css/styles.css">
     </head>
     <body>
-        <h1>{{location}} dining hall</h1>
-        <hr>
-        <h2>{{meal}}</h2>
-        {{content | safe}}
+        <form method="POST" action="/getReport" enctype="multipart/form-data">
+            <table>
+                <tr>
+                    <td align="right">Dining Hall:</td>
+                    <td>
+                        <select id="location", name="location">
+                            <option value="cjl">Center for Jewish Life</option>
+                            <option value="forbes">Forbes College</option>
+                            <option value="gradcollege">Graduate College</option>
+                            <option value="roma">Rockefeller & Mathey Colleges</option>
+                            <option value="whitman">Whitman College & Butler College</option>
+                            <option value="yeh">Yeh College & New College West</option>
+                        </select>
+                    </td> 
+                </tr>
+                <tr>
+                    <td align="right">Meal:</td>
+                    <td>
+                        <select id="meal", name="meal">
+                            <option value="Breakfast">Breakfast</option>
+                            <option value="Lunch">Lunch</option>
+                            <option value="Dinner">Dinner</option>
+                        </select>
+                    </td> 
+                </tr>
+                <tr>
+                    <td></td>
+                    <td><input id='submitButton' type="submit" value="Get Nutrition Info"></td> 
+                </tr>
+            </table>
+        </form>
     </body>
 </html>

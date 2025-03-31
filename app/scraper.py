@@ -3,30 +3,21 @@ scraper.py handles the scraping of nutrition information for menu items
 during meals at various Princeton University dining halls from menus.princeton.edu
 '''
 
-import argparse
-from bs4 import BeautifulSoup
 import datetime
+import urllib
+
+from common import DHALL_ARGS
+
+from bs4 import BeautifulSoup
 import pandas as pd
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-import urllib
 
 
 CAMPUS_DINING_URL = 'https://menus.princeton.edu/dining/_Foodpro/online-menu/pickMenu.asp'
 CAMPUS_DINING_ENC = 'ISO-8859-1'
-
-
-# locationNum, locationName
-DHALL_ARGS = {
-    'cjl': ['05', 'Center for Jewish Life'],
-    'forbes': ['03', 'Forbes College'],
-    'gradcollege': ['04', 'Graduate College'],
-    'roma': ['01', 'Rockefeller & Mathey Colleges'],
-    'whitman': ['08', 'Whitman College & Butler College'],
-    'yeh': ['06', 'Yeh College & New College West']
-}
 
 
 def _get_dining_url(location: str, meal: str, time: datetime) -> str:
@@ -138,7 +129,6 @@ def _parse_nut_rpt(raw: str) -> pd.DataFrame | None:
             else:
                 val_processed = float(val)
 
-
             new_rows[col_name].append(val_processed)
             col += 1
 
@@ -153,7 +143,7 @@ def get_meal_info(location: str, meal: str) -> pd.DataFrame:
 
     location: the dining hall to get the menu from 
               ('cjl', 'forbes', 'gradcollege' 'roma', 'whitman', 'yeh')
-            
+
     meal: the meal to get info for ('Breakfast', 'Lunch', or 'Dinner')
     '''
 
