@@ -15,6 +15,7 @@ import urllib
 
 
 CAMPUS_DINING_URL = 'https://menus.princeton.edu/dining/_Foodpro/online-menu/pickMenu.asp'
+CAMPUS_DINING_ENC = 'ISO-8859-1'
 
 
 # locationNum, locationName
@@ -70,7 +71,7 @@ def _get_nut_rpt(form_url: str) -> str:
         EC.presence_of_element_located((By.CLASS_NAME, "nutrptbody"))
     )
 
-    raw_report = driver.page_source     # TODO: figure out how to fix encoding issues
+    raw_report = driver.page_source
     driver.quit()
 
     return raw_report
@@ -80,53 +81,92 @@ def _parse_nut_rpt(raw: str) -> pd.DataFrame | None:
     '''
     Parses a raw html nutrition report into a dataframe
     '''
-    COL_TITLES = ['Recipe', 'Portion', 'Protein (g)', 'Fat-T (g)',
-                  'Carbohydrates (g)', 'Fiber (g)', 'Potassium (mg)',
-                  'Cholesterol (mg)', 'Calories (kcal)', 'Sugar (g)',
-                  'Sodium (mg)', 'A-IU (IU)', 'Vitamin C (mg)']
-    result_df = pd.DataFrame(columns=COL_TITLES)
+    new_rows = {
+        'Recipe Name': [],
+        'Portion': [],
+        'Protein (g)': [],
+        'Fat-T (g)': [],
+        'Carbohydrates (g)': [],
+        'Fiber (g)': [],
+        'Potassium (mg)': [],
+        'Cholesterol (mg)': [],
+        'Calories (kcal)': [],
+        'Sugar (g)': [],
+        'Sodium (mg)': [],
+        'A-IU (IU)': [],
+        'Vitamin C (mg)': []
+    }
 
-    soup = BeautifulSoup(raw, 'html.parser')
+    # hardcoded character replacement fix for encoding issues -
+    # this is an ugly and unscalable solution, so we should figure
+    # out a better way
+    fixes = {
+        # 'Θ': 'é',
+        # 'á': ' ',
+        '\n': ''
+    }
+
+    soup = BeautifulSoup(raw, 'html5lib')   # DEBUG
     nutrition_data_raw = soup.find_all('table')[1]
 
     for row in nutrition_data_raw.find_all('tr'):
-        # TODO: build row and put it into result_df
-        pass
+        # skip rows with head columns
+        if row.find('td', {'class': 'nutrptmainheadcolumns'}) or \
+                row.find('td', {'class': 'nutrptunitheadcolumns'}) or \
+                row.find('div', {'class': 'nutrpttotalheader'}):
+            continue
 
-    return None
+        # extract data from row
+        str_vals = [row.find('div', {'class': 'nutrptnames'}),
+                    row.find('div', {'class': 'nutrptportions'})
+                    ]
+        float_vals = row.find_all('div', {'class': 'nutrptvalues'})
+        nut_vals = str_vals + float_vals
+
+        # put extracted data into df construction dict
+        col = 0
+        for col_name, _ in new_rows.items():
+            # process text
+            val = nut_vals[col].get_text()
+            if val == '-\xa0-\xa0-\xa0-\xa0-':
+                val_processed = ''
+            elif col < 2:
+                val_processed = str(val)
+                # ugly hardcoded fix for erroneous encodings
+                for wrong, right in fixes.items():
+                    val_processed = val_processed.replace(wrong, right)
+            else:
+                val_processed = float(val)
 
 
-def main():
+            new_rows[col_name].append(val_processed)
+            col += 1
+
+    result = pd.DataFrame(new_rows)
+    return result
+
+
+def get_meal_info(location: str, meal: str) -> pd.DataFrame:
     '''
     prototype to get today's menu items for a dining hall and a meal
     this will eventually be converted into a method to get menu items and nutritional info'
+
+    location: the dining hall to get the menu from 
+              ('cjl', 'forbes', 'gradcollege' 'roma', 'whitman', 'yeh')
+            
+    meal: the meal to get info for ('Breakfast', 'Lunch', or 'Dinner')
     '''
 
-    # parse and validate args
-    parser = argparse.ArgumentParser(
-        description="Get Princeton campus dining menus")
-    parser.add_argument(
-        "location", help="the dining hall to get the menu from " +
-        "('cjl', 'forbes', 'roma', 'whitman', 'yeh')", type=str)
-    parser.add_argument("meal", help="the meal to get info for " +
-                        "('Breakfast', 'Lunch', or 'Dinner')", type=str)
-    args = parser.parse_args()
-    location = args.location
-    meal = args.meal
     todays_date = datetime.date.today()
 
     if DHALL_ARGS[location] is None:
-        raise ValueError(f'Invalid location {location}. ' +
+        raise ValueError(f'Invalid location \'{location}\'. ' +
                          "Valid locations include 'cjl', 'forbes', 'roma', 'whitman', and 'yeh'.")
 
     if meal != 'Breakfast' and meal != 'Lunch' and meal != 'Dinner':
-        raise ValueError(f'Invalid meal {meal}. +'
+        raise ValueError(f'Invalid meal \'{meal}\'. ' +
                          'Valid meals include \'Breakfast\', \'Lunch\', and \'Dinner\'.')
 
-    # build the URL
+    # scrape the data
     full_url = _get_dining_url(location, meal, todays_date)
-    _parse_nut_rpt(_get_nut_rpt(full_url))
-
-
-if __name__ == '__main__':
-    main()
+    return _parse_nut_rpt(_get_nut_rpt(full_url))
