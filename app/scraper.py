@@ -84,7 +84,7 @@ def _parse_nut_rpt(raw: str) -> pd.DataFrame | None:
         'Calories (kcal)': [],
         'Sugar (g)': [],
         'Sodium (mg)': [],
-        'A-IU (IU)': [],
+        'Vitamin A (IU)': [],
         'Vitamin C (mg)': []
     }
 
@@ -138,8 +138,7 @@ def _parse_nut_rpt(raw: str) -> pd.DataFrame | None:
 
 def get_meal_info(location: str, meal: str) -> pd.DataFrame:
     '''
-    prototype to get today's menu items for a dining hall and a meal
-    this will eventually be converted into a method to get menu items and nutritional info'
+    get today's nutritional info for a dining hall and a meal
 
     location: the dining hall to get the menu from 
               ('cjl', 'forbes', 'gradcollege' 'roma', 'whitman', 'yeh')

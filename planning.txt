@@ -1,14 +1,16 @@
-pull entre names, portions,
-prot, fat-T, carbs, fiber, potassium, cholesterol, calories, sugar, sodium, A-IU, Vitamin C
-% intake on the macros
+pull nutritional information once per day, store in db
 
-scrape? API?
+setup login system
 
+setup user table
 
-find all div of these class
-div class=pickmenucolmenucat - label
+setup food log table
 
-div class=pickmenucoldispname - item
+setup home screen w/ log for users
+    dashboard type setup
 
-https://menus.princeton.edu/dining/_Foodpro/online-menu/pickMenu.asp?locationNum=01&locationName=Rockefeller+%26+Mathey+Colleges&dtdate=03%2F31%2F2025&mealName=Lunch&sName=Princeton+University+Campus+Dining
-https://menus.princeton.edu/dining/_Foodpro/online-menu/nutRpt.asp?locationNum=01&locationName=Rockefeller+%26+Mathey+Colleges&dtdate=03%2F31%2F2025&mealName=Lunch&sName=Princeton+University+Campus+Dining
+setup home screen w/ login for nonusers
+
+setup add food screen
+
+connect to USDA db

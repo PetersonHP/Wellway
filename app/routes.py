@@ -14,6 +14,13 @@ from flask import Flask
 app = Flask(__name__)
 
 
+def scrape_nutrition():
+    '''
+    scrape all dining hall nutrition info for the current day and store 
+    it in the db
+    '''
+
+
 @app.route('/', methods=['GET'])
 def home():
     '''
