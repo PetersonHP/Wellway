@@ -2,6 +2,7 @@
 Handle client http requests
 '''
 
+import datetime
 import sys
 
 import scraper
@@ -37,8 +38,9 @@ def get_report():
     try:
         location = flask.request.form.get('location')
         meal = flask.request.form.get('meal')
+        todays_date = datetime.date.today()
 
-        nut_rpt = scraper.get_meal_info(location, meal)
+        nut_rpt = scraper.get_meal_info(location, meal, todays_date)
 
         rendered = flask.render_template(
             'report.html',

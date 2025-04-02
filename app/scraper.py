@@ -136,7 +136,7 @@ def _parse_nut_rpt(raw: str) -> pd.DataFrame | None:
     return result
 
 
-def get_meal_info(location: str, meal: str) -> pd.DataFrame:
+def get_meal_info(location: str, meal: str, date: datetime) -> pd.DataFrame:
     '''
     get today's nutritional info for a dining hall and a meal
 
@@ -145,8 +145,6 @@ def get_meal_info(location: str, meal: str) -> pd.DataFrame:
 
     meal: the meal to get info for ('Breakfast', 'Lunch', or 'Dinner')
     '''
-
-    todays_date = datetime.date.today()
 
     if DHALL_ARGS[location] is None:
         raise ValueError(f'Invalid location \'{location}\'. ' +
@@ -157,5 +155,5 @@ def get_meal_info(location: str, meal: str) -> pd.DataFrame:
                          'Valid meals include \'Breakfast\', \'Lunch\', and \'Dinner\'.')
 
     # scrape the data
-    full_url = _get_dining_url(location, meal, todays_date)
+    full_url = _get_dining_url(location, meal, date)
     return _parse_nut_rpt(_get_nut_rpt(full_url))

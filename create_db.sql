@@ -1,3 +1,8 @@
+/*
+ * Run this on a newly created PostgreSQL DB in order to properly construct the
+ * database.
+*/
+
 CREATE TYPE location AS ENUM ('cjl', 'forbes', 'gradcollege', 'roma', 'whitman', 'yeh');
 CREATE TYPE meal AS ENUM ('breakfast', 'lunch', 'dinner');
 
@@ -10,7 +15,7 @@ CREATE TABLE Recipe_Reports (
 	report_Location location NOT NULL,
 	report_Meal meal NOT NULL,
 
-	recipe_Name varchar(255) NOT NULL,
+	recipe_Name varchar NOT NULL,
 
 	portion_Info varchar(255) NOT NULL,
 	protein float8,
