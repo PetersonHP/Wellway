@@ -51,9 +51,10 @@ class RecipeReport(Base):
     report_date = Column(Date, nullable=False)
     report_location = Column(String(255), nullable=False)
     report_meal = Column(String(255), nullable=False)
-    recipe_name = Column(String(255), nullable=False)
 
+    recipe_name = Column(String(255), nullable=False)
     portion_info = Column(String(255), nullable=False)
+    
     protein = Column(Float)
     fat = Column(Float)
     carbs = Column(Float)
@@ -104,27 +105,35 @@ def store_nut_rpt(location: str, meal: str, date: datetime, report: pd.DataFrame
     new_rows = []
     for _, row in report.iterrows():
         new_rows.append(RecipeReport(
-                report_id=uuid.uuid4(),
+            report_id=uuid.uuid4(),
 
-                report_date=date,
-                report_location=location.lower(),
-                report_meal=meal.lower(),
+            report_date=date,
+            report_location=location.lower(),
+            report_meal=meal.lower(),
 
-                recipe_name=row['Recipe Name'],
-                portion_info=row['Portion'],
-                protein=row['Protein (g)'] if pd.notna(row['Protein (g)']) else None,
-                fat=row['Fat-T (g)'] if pd.notna(row['Fat-T (g)']) else None,
-                carbs=row['Carbohydrates (g)'] if pd.notna(row['Carbohydrates (g)'] ) else None,
-                fiber=row['Fiber (g)'] if pd.notna(row['Fiber (g)']) else None,
-                potassium=row['Potassium (mg)'] if pd.notna(row['Potassium (mg)']) else None,
-                cholesterol=row['Cholesterol (mg)'] if pd.notna(row['Cholesterol (mg)']) else None,
-                calories=row['Calories (kcal)'] if pd.notna(row['Calories (kcal)']) else None,
-                sugar=row['Sugar (g)'] if pd.notna(row['Sugar (g)']) else None,
-                sodium=row['Sodium (mg)'] if pd.notna(row['Sodium (mg)']) else None,
-                vitamin_a=row['Vitamin A (IU)'] if pd.notna(row['Vitamin A (IU)']) else None,
-                vitamin_b=row['Vitamin C (mg)'] if pd.notna(row['Vitamin C (mg)']) else None,
-            ))
-    
+            recipe_name=row['Recipe Name'],
+            portion_info=row['Portion'],
+            protein=row['Protein (g)'] if pd.notna(
+                row['Protein (g)']) else None,
+            fat=row['Fat-T (g)'] if pd.notna(row['Fat-T (g)']) else None,
+            carbs=row['Carbohydrates (g)'] if pd.notna(
+                row['Carbohydrates (g)']) else None,
+            fiber=row['Fiber (g)'] if pd.notna(row['Fiber (g)']) else None,
+            potassium=row['Potassium (mg)'] if pd.notna(
+                row['Potassium (mg)']) else None,
+            cholesterol=row['Cholesterol (mg)'] if pd.notna(
+                row['Cholesterol (mg)']) else None,
+            calories=row['Calories (kcal)'] if pd.notna(
+                row['Calories (kcal)']) else None,
+            sugar=row['Sugar (g)'] if pd.notna(row['Sugar (g)']) else None,
+            sodium=row['Sodium (mg)'] if pd.notna(
+                row['Sodium (mg)']) else None,
+            vitamin_a=row['Vitamin A (IU)'] if pd.notna(
+                row['Vitamin A (IU)']) else None,
+            vitamin_b=row['Vitamin C (mg)'] if pd.notna(
+                row['Vitamin C (mg)']) else None,
+        ))
+
     with sqlalchemy.orm.Session(_engine) as session:
         try:
             session.add_all(new_rows)
@@ -162,8 +171,9 @@ def main():
     with sqlalchemy.orm.Session(_engine) as session:
         result = session.query(RecipeReport)
         print(result.all())
-        
+
     _delete_rows(RecipeReport)
+
 
 if __name__ == '__main__':
     main()

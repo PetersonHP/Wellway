@@ -38,34 +38,44 @@ def _get_dining_url(location: str, meal: str, time: datetime) -> str:
 
 def _get_nut_rpt(form_url: str) -> str:
     '''
-    fills out the menu form to request a nutrition report for one of each item
-    returns the resulting report from campus dining
+    Fills out the menu form to request a nutrition report for one of each item.
+    Returns the resulting report HTML as a string.
+
+    Returns an empty string if information is not available for the requested meal.
     '''
 
     driver = webdriver.Chrome()
 
-    driver.get(form_url)
-    WebDriverWait(driver, 10).until(
-        EC.presence_of_element_located((By.ID, "pickMenuTable"))
-    )
+    try:
+        driver.get(form_url)
+        WebDriverWait(driver, 10).until(
+            EC.presence_of_element_located((By.TAG_NAME, "body"))
+        )
 
-    # check boxes
-    checkboxes = driver.find_elements(By.NAME, "recipe")
-    for box in checkboxes:
-        if not box.is_selected():
-            box.click()
+        # return empty string if no data
+        if "No Data Available" in driver.page_source:
+            return ""
 
-    # submit form
-    submit = driver.find_element(By.XPATH, "//input[@type='submit']")
-    submit.click()
-    WebDriverWait(driver, 10).until(
-        EC.presence_of_element_located((By.CLASS_NAME, "nutrptbody"))
-    )
+        WebDriverWait(driver, 10).until(
+            EC.presence_of_element_located((By.ID, "pickMenuTable"))
+        )
 
-    raw_report = driver.page_source
-    driver.quit()
+        # check boxes and submit form
+        checkboxes = driver.find_elements(By.NAME, "recipe")
+        for box in checkboxes:
+            if not box.is_selected():
+                box.click()
+        submit = driver.find_element(By.XPATH, "//input[@type='submit']")
+        submit.click()
 
-    return raw_report
+        WebDriverWait(driver, 10).until(
+            EC.presence_of_element_located((By.CLASS_NAME, "nutrptbody"))
+        )
+
+        return driver.page_source
+
+    finally:
+        driver.quit()
 
 
 def _parse_nut_rpt(raw: str) -> pd.DataFrame | None:
@@ -97,7 +107,7 @@ def _parse_nut_rpt(raw: str) -> pd.DataFrame | None:
         '\n': ''
     }
 
-    soup = BeautifulSoup(raw, 'html5lib')   # DEBUG
+    soup = BeautifulSoup(raw, 'html5lib')
     nutrition_data_raw = soup.find_all('table')[1]
 
     for row in nutrition_data_raw.find_all('tr'):
@@ -120,7 +130,7 @@ def _parse_nut_rpt(raw: str) -> pd.DataFrame | None:
             # process text
             val = nut_vals[col].get_text()
             if val == '-\xa0-\xa0-\xa0-\xa0-':
-                val_processed = ''
+                val_processed = None
             elif col < 2:
                 val_processed = str(val)
                 # ugly hardcoded fix for erroneous encodings
@@ -156,4 +166,7 @@ def get_meal_info(location: str, meal: str, date: datetime) -> pd.DataFrame:
 
     # scrape the data
     full_url = _get_dining_url(location, meal, date)
-    return _parse_nut_rpt(_get_nut_rpt(full_url))
+    raw_report = _get_nut_rpt(full_url)
+    if raw_report == '':
+        return pd.DataFrame()
+    return _parse_nut_rpt(raw_report)
