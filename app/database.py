@@ -10,11 +10,12 @@ from typing import Type
 import scraper
 
 from dotenv import load_dotenv
+from flask_login import UserMixin
 import pandas as pd
 import sqlalchemy
-from sqlalchemy import Column, Date, Float, ForeignKey, String, TIMESTAMP
+from sqlalchemy import Boolean, Column, Date, Float, ForeignKey, JSON, String, TIMESTAMP
 from sqlalchemy.dialects.postgresql import UUID
-from sqlalchemy.orm import DeclarativeBase
+from sqlalchemy.orm import DeclarativeBase, relationship
 
 
 load_dotenv()
@@ -34,7 +35,6 @@ class Base(DeclarativeBase):
     '''
     sqlalchemy DeclarativeBase class
     '''
-    pass
 
 
 class RecipeReport(Base):
@@ -54,7 +54,7 @@ class RecipeReport(Base):
 
     recipe_name = Column(String(255), nullable=False)
     portion_info = Column(String(255), nullable=False)
-    
+
     protein = Column(Float)
     fat = Column(Float)
     carbs = Column(Float)
@@ -68,7 +68,7 @@ class RecipeReport(Base):
     vitamin_b = Column(Float)
 
 
-class User(Base):
+class User(Base, UserMixin):
     '''
     Users tracks users of the app. This will likely be updated in the future 
     to enable authentication via Google CAS and or university CAS systems.
@@ -81,6 +81,14 @@ class User(Base):
     email = Column(String(255), unique=True, nullable=False)
     password_hash = Column(String(255))
     created_at = Column(TIMESTAMP, nullable=False)
+    _is_active = Column(Boolean, nullable=False, default=True)
+
+    def get_id(self):
+        return str(self.user_id)
+
+    @property
+    def is_active(self):
+        return self._is_active
 
 
 class FoodLog(Base):
@@ -91,11 +99,14 @@ class FoodLog(Base):
     __tablename__ = 'food_logs'
 
     log_id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    user_id = Column(UUID(as_uuid=True), ForeignKey(
-        'users.user_id', ondelete='CASCADE'), nullable=False)
-    report_id = Column(UUID(as_uuid=True), ForeignKey(
-        'recipe_reports.report_id'), nullable=False)
+
     log_date = Column(Date, nullable=False)
+    user_id = Column(UUID(as_uuid=True),
+                     ForeignKey('users.user_id', ondelete='CASCADE'), nullable=False)
+
+    log = Column(JSON, nullable=False)
+
+    user = relationship("User", backref="food_logs")
 
 
 def store_nut_rpt(location: str, meal: str, date: datetime, report: pd.DataFrame) -> None:
@@ -142,6 +153,27 @@ def store_nut_rpt(location: str, meal: str, date: datetime, report: pd.DataFrame
         except Exception as e:
             session.rollback()
             raise e
+
+
+def get_user(user_id: str) -> User | None:
+    '''
+    Returns the User object corresponding to the provided user_id
+
+    Returns None if the user doesn't exist
+    '''
+    try:
+        user_uuid = uuid.UUID(user_id)
+    except ValueError:
+        # invalid uuid
+        return None
+
+    with sqlalchemy.orm.Session(_engine) as session:
+        try:
+            result = session.get(User, user_uuid)
+            return result
+        except Exception:
+            # user not found
+            return None
 
 
 def _delete_rows(model: Type[Base]) -> None:
