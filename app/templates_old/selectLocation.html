@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wellway Web App (alpha)</title>
+    <link rel="stylesheet" href="/static/css/styles.css">
+</head>
+<body>
+    <h1>Bon Appétit</h1>
+    <h3>Where are you dining today?</h3>
+    <hr>
+    <table border="2">
+        <tr>
+            <td><a href="{{ url_for('add_food', location='roma') }}">{{ DHALL_ARGS['roma'][1] }}</a></td>
+            <td><a href="{{ url_for('add_food', location='yeh') }}">{{ DHALL_ARGS['yeh'][1] }}</a></td>
+        </tr>
+        <tr>
+            <td><a href="{{ url_for('add_food', location='whitman') }}">{{ DHALL_ARGS['whitman'][1] }}</a></td>
+            <td><a href="{{ url_for('add_food', location='forbes') }}">{{ DHALL_ARGS['forbes'][1] }}</a></td>
+        </tr>
+        <tr>
+            <td><a href="{{ url_for('add_food', location='cjl') }}">{{ DHALL_ARGS['cjl'][1] }}</a></td>
+            <td><a href="{{ url_for('add_food', location='gradcollege') }}">{{ DHALL_ARGS['gradcollege'][1] }}</a></td>
+        </tr>
+        <tr>
+            <td>Other Campus Dining (Coming Soon!)</td>
+            <td>Other (Search Any Food - Coming Soon!)</td>
+        </tr>
+    </table>
+</body>
+</html>

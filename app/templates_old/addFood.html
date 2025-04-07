@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Food</title>
+    <link rel="stylesheet" href="/static/css/styles.css">
+
+    <script>
+        // Auto-hide flash messages after 3 seconds
+        setTimeout(() => {
+          const messages = document.querySelectorAll('.flash-message');
+          messages.forEach(msg => msg.style.display = 'none');
+        }, 3000);
+    </script>
+</head>
+<body>
+    <h2>How was your meal?</h2>
+    <h3>Select foods to add here:</h3>
+
+    <hr>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="flash-message {{ category }}">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <form method="POST" action="{{ url_for('add_food', location=location, meal=meal) }}">
+        {{ form.hidden_tag() }}
+    
+        <table>
+            <thead>
+                <tr>
+                    <th>Menu Item and Serving Size</th>
+                    <th>Quantity</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item_form, menu_item in items_with_menu %}
+                    <tr>
+                        <td>
+                            <label>{{ menu_item[1] }}</label>
+                        </td>
+                        <td>
+                            <label for="{{ item_form.quantity.id }}">({{ menu_item[2] }})</label>
+                            {{ item_form.quantity() }}
+                            {% if item_form.quantity.errors %}
+                                <ul>
+                                    {% for error in item_form.quantity.errors %}
+                                        <li>{{ error }}</li>
+                                    {% endfor %}
+                                </ul>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    
+        <div>
+            <button type="submit">Add Food Items</button>
+        </div>
+    </form>
+    <hr>
+    <h4>For reference, a standard Campus Dining serving spoon holds around 4oz of food.</h4>
+</body>
+</html>

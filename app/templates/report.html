@@ -1,19 +1,82 @@
 <!DOCTYPE html>
-<html>
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Wellway Web App (alpha)</title>
-        <link rel="stylesheet" href="/static/css/styles.css">
-    </head>
-    <body>
-        <h1>{{location}}</h1>
-        <hr>
-        <h2>{{meal}}</h2>
-        <hr>
-        {{content | safe}}
-        <hr>
-        <a href="/">Back to home</a>
-        <hr>
-    </body>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Wellway Web App (alpha)</title>
+
+    <!-- Bootstrap CSS -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+
+    <style>
+      body {
+        background-color: #121212;
+        color: #f1f1f1;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        padding: 2rem 1rem;
+      }
+
+      .container-custom {
+        max-width: 700px;
+        margin: 0 auto;
+        background-color: #1e1e1e;
+        padding: 2rem;
+        border-radius: 16px;
+        box-shadow: 0 0 20px rgba(255, 255, 255, 0.05);
+      }
+
+      h1, h2 {
+        text-align: center;
+        margin-bottom: 1rem;
+      }
+
+      hr {
+        border-color: #444;
+        margin: 1.5rem 0;
+      }
+
+      a {
+        color: #0d6efd;
+        text-decoration: none;
+      }
+
+      a:hover {
+        text-decoration: underline;
+      }
+
+      @media (max-width: 576px) {
+        h1 {
+          font-size: 1.75rem;
+        }
+
+        h2 {
+          font-size: 1.25rem;
+        }
+
+        .container-custom {
+          padding: 1.25rem;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="container-custom">
+      <h1>{{ location }}</h1>
+      <hr />
+      <h2>{{ meal }}</h2>
+      <hr />
+      <div>{{ content | safe }}</div>
+      <hr />
+      <div class="text-center">
+        <a href="/" class="btn btn-outline-light mt-2">← Back to Home</a>
+      </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  </body>
 </html>

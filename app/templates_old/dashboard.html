@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wellway Web App (alpha)</title>
+    <link rel="stylesheet" href="/static/css/styles.css">
+</head>
+<body>
+    <h1>Great work!</h1>
+    <h3>Here's Today's Nutrition Summary:</h3>
+    <hr>
+    <table border="2">
+        <tr>
+            <th>Total Calories</th>
+            <td colspan="2" align="center">{{ daily_summary['total_calories'] }}</td>
+        </tr>
+        <tr></tr>
+        <tr>
+            <th>Protein</th>
+            <td>{{ "%.1f"|format(daily_summary['percent_protein'] * 100) }}%</td>
+            <td>{{ daily_summary['grams_protein'] }}g</td>
+        </tr>
+        <tr>
+            <th>Fat</th>
+            <td>{{ "%.1f"|format(daily_summary['percent_fat'] * 100) }}%</td>
+            <td>{{ daily_summary['grams_fat'] }}g</td>
+        </tr>
+        <tr>
+            <th>Carbs</th>
+            <td>{{ "%.1f"|format(daily_summary['percent_carbs'] * 100) }}%</td>
+            <td>{{ daily_summary['grams_carbs'] }}g</td>
+        </tr>
+        <tr>
+            <td colspan="3" align="center"><a href="/fullReport">View Full Report</a></td>
+        </tr>
+    </table>
+    <hr>
+    <table border="1">
+        <tr>
+            <th><a href="{{ url_for('add_food') }}"><strong>Log New Foods</strong></a></th>
+            <td><a href="{{ url_for('view_edit_log') }}">View and Edit Food Log</a></td>
+            <td><a href="{{ url_for('signout') }}">Sign Out (signed in as {{current_user.username}})</a></td>
+        </tr>
+    </table>
+</body>
+</html>

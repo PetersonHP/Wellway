@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wellway Web App (alpha)</title>
+    <link rel="stylesheet" href="/static/css/styles.css">
+</head>
+<body>
+    <h1>Which meal is being served?</h1>
+    <h3>Even if it's breakfast for you, at 7pm, select "Dinner"</h3>
+    <hr>
+    <table border="2">
+        <tr>
+            <td><a href="{{url_for('add_food', location=location, meal='Breakfast')}}">Breakfast</a></td>
+        </tr>
+        <tr>
+            <td><a href="{{url_for('add_food', location=location, meal='Lunch')}}">Lunch</a></td>
+        </tr>
+        <tr>
+            <td><a href="{{url_for('add_food', location=location, meal='Dinner')}}">Dinner</a></td>
+        </tr>
+    </table>
+</body>
+</html>
