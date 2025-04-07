@@ -7,12 +7,13 @@
     <link rel="stylesheet" href="/static/css/styles.css">
 </head>
 <body>
-    <h2>Daily Nutrition Summary for {{current_user.username}}</h2>
+    <h1>Great work!</h1>
+    <h3>Here's Today's Nutrition Summary:</h3>
     <hr>
     <table border="2">
         <tr>
             <th>Total Calories</th>
-            <td>{{ daily_summary['total_calories'] }}</td>
+            <td colspan="2" align="center">{{ daily_summary['total_calories'] }}</td>
         </tr>
         <tr></tr>
         <tr>
@@ -30,8 +31,17 @@
             <td>{{ "%.1f"|format(daily_summary['percent_carbs'] * 100) }}%</td>
             <td>{{ daily_summary['grams_carbs'] }}g</td>
         </tr>
+        <tr>
+            <td colspan="3" align="center"><a href="/fullReport">View Full Report</a></td>
+        </tr>
     </table>
     <hr>
-    <a href="/signout">Sign Out</a>
+    <table border="1">
+        <tr>
+            <th><a href="{{ url_for('add_food') }}"><strong>Log New Foods</strong></a></th>
+            <td><a href="{{ url_for('view_edit_log') }}">View and Edit Food Log</a></td>
+            <td><a href="{{ url_for('signout') }}">Sign Out (signed in as {{current_user.username}})</a></td>
+        </tr>
+    </table>
 </body>
 </html>

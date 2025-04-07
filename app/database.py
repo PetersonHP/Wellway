@@ -152,10 +152,14 @@ class FoodLog(Base):
                         report = session.get(RecipeReport, report_tuple[0])
                         qty = report_tuple[1]
 
-                        result['total_calories'] += int(report.calories) * qty
-                        result['grams_protein'] += int(report.protein) * qty
-                        result['grams_fat'] += int(report.fat) * qty
-                        result['grams_carbs'] += int(report.carbs) * qty
+                        if report.calories is not None:
+                            result['total_calories'] += int(report.calories) * qty
+                        if report.protein is not None:
+                            result['grams_protein'] += int(report.protein) * qty
+                        if report.fat is not None:
+                            result['grams_fat'] += int(report.fat) * qty
+                        if report.carbs is not None:
+                            result['grams_carbs'] += int(report.carbs) * qty
 
                 if result['total_calories'] > 0:
                     result['percent_protein'] = result['grams_protein'] * \
@@ -223,6 +227,29 @@ def store_nut_rpt(location: str, meal: str, date: datetime, report: pd.DataFrame
         except Exception as e:
             session.rollback()
             raise e
+
+
+def get_stored_menu(location: str, meal: str, date: datetime) -> list[tuple[str, str, str]]:
+    '''
+    Returns a list of menu items for a provided [location], [meal], and [date].
+
+    List items are tuples of the format (report_id, recipe_name, portion_info).
+    '''
+    result = []
+    today = date.strftime('%Y-%m-%d')
+    lower_meal = meal.lower()
+    with sqlalchemy.orm.Session(_engine) as session:
+        items = session.query(RecipeReport).filter(
+            RecipeReport.report_date == today,
+            RecipeReport.report_location == location,
+            RecipeReport.report_meal == lower_meal
+        ).all()
+
+        for item in items:
+            result.append(
+                (str(item.report_id), item.recipe_name, item.portion_info))
+
+    return result
 
 
 def register_user(username: str, email: str, password: str, timestamp: datetime) -> UUID | None:
@@ -312,7 +339,8 @@ def _get_create_food_log(
         meals: {
             breakfast: list[(RecipeReport uuid str, quantity int)],
             lunch: list[(RecipeReport uuid str, quantity int)],
-            dinner: list[(RecipeReport uuid str, quantity int)]
+            dinner: list[(RecipeReport uuid str, quantity int)],
+            snacks: list[(RecipeReport uuid str, quantity int)]
         }
     }
     '''
@@ -337,13 +365,16 @@ def _get_create_food_log(
                 'meals': {
                     'breakfast': [],
                     'lunch': [],
-                    'dinner': []
+                    'dinner': [],
+                    'snacks': []
                 }
             })
         )
         session.add(result)
         session.commit()
+        session.refresh(result)
 
+    _ = result.log
     return result
 
 
@@ -362,6 +393,8 @@ def get_create_food_log(user: User, timestamp: datetime):
 def add_foods_to_log(user: User, meal: str, timestamp: datetime, recipes: list[(str, int)]):
     '''
     Adds a list of recipes to a users daily food log
+
+    List item format: (recipe_id, quantity)
     '''
 
     with sqlalchemy.orm.Session(_engine) as session:
@@ -374,6 +407,26 @@ def add_foods_to_log(user: User, meal: str, timestamp: datetime, recipes: list[(
                 log_dict['meals'][lower_meal].append(recipe_id)
 
             current_log.log = json.dumps(log_dict)
+            session.commit()
+
+        except Exception as e:
+            session.rollback()
+            raise e
+
+
+def _delete_food_log(user: User, date: datetime):
+    '''
+    Deletes a daily food log
+    '''
+    today = date.strftime('%Y-%m-%d')
+    with sqlalchemy.orm.Session(_engine) as session:
+        try:
+            to_delete = session.query(FoodLog).filter(
+                FoodLog.user_id == user.user_id,
+                FoodLog.log_date == today
+            ).first()
+
+            session.delete(to_delete)
             session.commit()
 
         except Exception as e:

@@ -6,10 +6,10 @@ import atexit
 from datetime import datetime
 import os
 
-from common import DINING_HALLS, MEALS, log
+from common import DINING_HALLS, DHALL_ARGS, MEALS, log
 import database
 from database import User
-from forms import RegistrationForm, LoginForm
+from forms import RegistrationForm, LoginForm, AddFoodForm
 import scraper
 
 from apscheduler.schedulers.background import BackgroundScheduler
@@ -80,7 +80,8 @@ def dashboard():
     '''
     dashboard home screen for a user
     '''
-    current_log = database.get_create_food_log(flask_login.current_user, datetime.now())
+    current_log = database.get_create_food_log(
+        flask_login.current_user, datetime.now())
     daily_summary = current_log.get_summary()
 
     return flask.render_template('dashboard.html', daily_summary=daily_summary)
@@ -114,7 +115,6 @@ def login():
         # SUCCESS
         flask_login.login_user(current_user)
         log.info('Successfully logged in user %s', form.username)
-        flask.flash(f'Welcome {current_user.username}!')
 
         return flask.redirect(flask.url_for('dashboard'))
 
@@ -138,12 +138,67 @@ def register():
                         f'email {form.email.data} is already registered.')
             return flask.render_template('registerPage.html', form=form)
         else:
-            flask.flash(f'Welcome to Wellway {form.username.data}!')
             flask_login.login_user(load_user(str(new_id)))
 
             return flask.redirect(flask.url_for('dashboard'))
 
     return flask.render_template('registerPage.html', form=form)
+
+
+@app.route('/addFood/', methods=['GET', 'POST'])
+@login_required
+def add_food(location=None, meal=None):
+    '''
+    Add new foods to today's log
+    '''
+    location = flask.request.args.get('location', None)
+    meal = flask.request.args.get('meal', None)
+
+    if location is None:
+        return flask.render_template('selectLocation.html', DHALL_ARGS=DHALL_ARGS)
+    if meal is None:
+        return flask.render_template('selectMeal.html', location=location)
+
+    menu = database.get_stored_menu(location, meal, datetime.now())
+    form = AddFoodForm(flask.request.form)
+    for _ in range(len(menu)):
+        form.add_item()
+    items_with_menu = zip(form.items, menu)
+
+    if form.validate_on_submit():
+        food_to_add = []
+        for item_form, menu_item in items_with_menu:
+            if item_form.quantity.data > 0:
+                food_to_add.append((menu_item[0], item_form.quantity.data))
+
+        database.add_foods_to_log(
+            flask_login.current_user, meal, datetime.now(), food_to_add
+        )
+        return flask.redirect(flask.url_for('dashboard'))
+
+    return flask.render_template(
+        'addFood.html',
+        menu=menu, form=form, items_with_menu=items_with_menu,
+        location=location, meal=meal
+    )
+
+
+@app.route('/viewEditLog/', methods=['GET', 'POST'])
+@login_required
+def view_edit_log():
+    '''
+    View or edit the food log for today
+    '''
+    return flask.render_template('viewEditLog.html')
+
+@app.route('/deleteLog', methods=['POST'])
+@login_required
+def delete_log():
+    '''
+    Deletes todays log for the logged in user
+    '''
+    database._delete_food_log(flask_login.current_user, datetime.now())
+    return flask.redirect(flask.url_for('dashboard'))
 
 
 # @app.route('/forgot')

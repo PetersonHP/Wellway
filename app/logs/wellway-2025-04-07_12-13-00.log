@@ -1,0 +1,33 @@
+INFO:Wellway:Searching for DB at postgresql://postgres:W311%W4y&4dm1n@localhost:5432/wellwaydb
+INFO:apscheduler.scheduler:Adding job tentatively -- it will be properly scheduled when the scheduler starts
+INFO:apscheduler.scheduler:Added job "scrape_nutrition_daily" to job store "default"
+INFO:apscheduler.scheduler:Scheduler started
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 111-886-960
+INFO:werkzeug:127.0.0.1 - - [07/Apr/2025 12:13:21] "GET /viewEditLog/ HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [07/Apr/2025 12:13:21] "[36mGET /static/css/styles.css HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [07/Apr/2025 12:13:23] "[32mPOST /deleteLog HTTP/1.1[0m" 302 -
+INFO:werkzeug:127.0.0.1 - - [07/Apr/2025 12:13:23] "GET /dashboard HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [07/Apr/2025 12:13:24] "[36mGET /static/css/styles.css HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [07/Apr/2025 12:13:25] "GET /addFood/ HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [07/Apr/2025 12:13:25] "[36mGET /static/css/styles.css HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [07/Apr/2025 12:13:27] "GET /addFood/?location=cjl HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [07/Apr/2025 12:13:27] "[36mGET /static/css/styles.css HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [07/Apr/2025 12:13:28] "GET /addFood/?location=cjl&meal=Dinner HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [07/Apr/2025 12:13:28] "[36mGET /static/css/styles.css HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [07/Apr/2025 12:13:32] "[32mPOST /addFood/?location=cjl&meal=Dinner HTTP/1.1[0m" 302 -
+INFO:werkzeug:127.0.0.1 - - [07/Apr/2025 12:13:32] "[35m[1mGET /dashboard HTTP/1.1[0m" 500 -
+INFO:werkzeug:127.0.0.1 - - [07/Apr/2025 12:13:33] "[36mGET /dashboard?__debugger__=yes&cmd=resource&f=style.css HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [07/Apr/2025 12:13:33] "[36mGET /dashboard?__debugger__=yes&cmd=resource&f=debugger.js HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [07/Apr/2025 12:13:33] "GET /dashboard?__debugger__=yes&cmd=resource&f=console.png&s=Kbe0XZpmiMT6mpuaJekO HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [07/Apr/2025 12:13:33] "[36mGET /dashboard?__debugger__=yes&cmd=resource&f=console.png HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [07/Apr/2025 12:15:06] "[32mPOST /addFood/?location=cjl&meal=Dinner HTTP/1.1[0m" 302 -
+INFO:werkzeug:127.0.0.1 - - [07/Apr/2025 12:15:06] "[35m[1mGET /dashboard HTTP/1.1[0m" 500 -
+INFO:werkzeug:127.0.0.1 - - [07/Apr/2025 12:15:06] "[36mGET /dashboard?__debugger__=yes&cmd=resource&f=style.css HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [07/Apr/2025 12:15:06] "[36mGET /dashboard?__debugger__=yes&cmd=resource&f=debugger.js HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [07/Apr/2025 12:15:07] "[36mGET /dashboard?__debugger__=yes&cmd=resource&f=console.png&s=Kbe0XZpmiMT6mpuaJekO HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [07/Apr/2025 12:18:15] "[35m[1mGET /dashboard HTTP/1.1[0m" 500 -
+INFO:werkzeug:127.0.0.1 - - [07/Apr/2025 12:18:15] "[36mGET /dashboard?__debugger__=yes&cmd=resource&f=style.css HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [07/Apr/2025 12:18:15] "[36mGET /dashboard?__debugger__=yes&cmd=resource&f=debugger.js HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [07/Apr/2025 12:18:16] "[36mGET /dashboard?__debugger__=yes&cmd=resource&f=console.png&s=Kbe0XZpmiMT6mpuaJekO HTTP/1.1[0m" 304 -
+INFO:apscheduler.scheduler:Scheduler has been shut down

@@ -3,7 +3,8 @@ Forms related to user registration and login
 '''
 
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField
+from wtforms import StringField, PasswordField, SelectField, \
+    IntegerField, FieldList, FormField
 from wtforms import validators as val
 
 
@@ -50,3 +51,28 @@ class ForgotPasswordForm(FlaskForm):
                              val.Length(min=6, max=40),
                              val.Email(message='Invalid email address.')]
     )
+
+
+class AddFoodFormItem(FlaskForm):
+    '''
+    A single recipe item to add
+    '''
+    class Meta:
+        csrf = False
+
+    quantity = IntegerField('Quantity', default=0, validators=[
+        val.NumberRange(min=0, message="Quantity must be a positive, non-decimal number.")]
+    )
+
+
+class AddFoodForm(FlaskForm):
+    '''
+    Form to add new foods to the log
+    '''
+    items = FieldList(FormField(AddFoodFormItem), min_entries=1)
+
+    def add_item(self):
+        '''
+        Add recipe item to form
+        '''
+        self.items.append_entry()
