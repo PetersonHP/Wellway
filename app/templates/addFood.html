@@ -1,70 +1,188 @@
 <!DOCTYPE html>
-<html>
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Add Food</title>
-    <link rel="stylesheet" href="/static/css/styles.css">
+
+    <!-- Bootstrap CSS -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+
+    <style>
+      body {
+        background-color: #121212;
+        color: #f1f1f1;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        padding: 2rem 1rem;
+      }
+
+      .container-custom {
+        max-width: 700px;
+        margin: 0 auto;
+        background-color: #1e1e1e;
+        padding: 2rem;
+        border-radius: 16px;
+        box-shadow: 0 0 20px rgba(255, 255, 255, 0.05);
+      }
+
+      .form-control,
+      .form-select {
+        background-color: #2a2a2a;
+        color: #f1f1f1;
+        border: 1px solid #444;
+      }
+
+      .form-control:focus,
+      .form-select:focus {
+        background-color: #2a2a2a;
+        color: #ffffff;
+        border-color: #0d6efd;
+        box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+      }
+
+      .btn-outline-light:hover {
+        background-color: #ffffff;
+        color: #121212;
+      }
+
+      .flash-message {
+        margin-bottom: 1rem;
+        padding: 0.75rem 1rem;
+        border-radius: 8px;
+      }
+
+      .flash-message.error {
+        background-color: #dc3545;
+        color: white;
+      }
+
+      .flash-message.success {
+        background-color: #28a745;
+        color: white;
+      }
+
+      table {
+        width: 100%;
+      }
+
+      th,
+      td {
+        padding: 0.75rem;
+        text-align: left;
+        vertical-align: middle;
+      }
+
+      hr {
+        border-color: #444;
+        margin: 2rem 0;
+      }
+
+      @media (max-width: 576px) {
+        table,
+        thead,
+        tbody,
+        th,
+        td,
+        tr {
+          display: block;
+          width: 100%;
+        }
+
+        td {
+          margin-bottom: 1rem;
+        }
+
+        th {
+          background-color: transparent;
+          color: #ccc;
+          font-weight: bold;
+          padding: 0.25rem 0;
+        }
+
+        tr {
+          border-bottom: 1px solid #333;
+        }
+      }
+    </style>
 
     <script>
-        // Auto-hide flash messages after 3 seconds
-        setTimeout(() => {
-          const messages = document.querySelectorAll('.flash-message');
-          messages.forEach(msg => msg.style.display = 'none');
-        }, 3000);
+      // Auto-hide flash messages after 3 seconds
+      setTimeout(() => {
+        const messages = document.querySelectorAll('.flash-message');
+        messages.forEach(msg => msg.style.display = 'none');
+      }, 3000);
     </script>
-</head>
-<body>
-    <h2>How was your meal?</h2>
-    <h3>Select foods to add here:</h3>
+  </head>
 
-    <hr>
+  <body>
+    <div class="container-custom">
+      <h2 class="text-center">How was your meal?</h2>
+      <h4 class="text-center mb-4">Select foods to add here:</h4>
+      <hr />
 
-    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}
-            {% for category, message in messages %}
-                <div class="flash-message {{ category }}">{{ message }}</div>
-            {% endfor %}
+          {% for category, message in messages %}
+            <div class="flash-message {{ category }}">{{ message }}</div>
+          {% endfor %}
         {% endif %}
-    {% endwith %}
+      {% endwith %}
 
-    <form method="POST" action="{{ url_for('add_food', location=location, meal=meal) }}">
+      <form
+        method="POST"
+        action="{{ url_for('add_food', location=location, meal=meal) }}"
+      >
         {{ form.hidden_tag() }}
-    
-        <table>
+
+        <div class="table-responsive">
+          <table class="table table-borderless align-middle text-light">
             <thead>
-                <tr>
-                    <th>Menu Item and Serving Size</th>
-                    <th>Quantity</th>
-                </tr>
+              <tr>
+                <th>Menu Item and Serving Size</th>
+                <th>Quantity</th>
+              </tr>
             </thead>
             <tbody>
-                {% for item_form, menu_item in items_with_menu %}
-                    <tr>
-                        <td>
-                            <label>{{ menu_item[1] }}</label>
-                        </td>
-                        <td>
-                            <label for="{{ item_form.quantity.id }}">({{ menu_item[2] }})</label>
-                            {{ item_form.quantity() }}
-                            {% if item_form.quantity.errors %}
-                                <ul>
-                                    {% for error in item_form.quantity.errors %}
-                                        <li>{{ error }}</li>
-                                    {% endfor %}
-                                </ul>
-                            {% endif %}
-                        </td>
-                    </tr>
-                {% endfor %}
+              {% for item_form, menu_item in items_with_menu %}
+              <tr>
+                <td>
+                  <label class="form-label">{{ menu_item[1] }}</label>
+                  <div class="text-muted small">{{ menu_item[2] }}</div>
+                </td>
+                <td>
+                  {{ item_form.quantity(class="form-control") }}
+                  {% if item_form.quantity.errors %}
+                  <ul class="text-danger mt-1 mb-0 small">
+                    {% for error in item_form.quantity.errors %}
+                    <li>{{ error }}</li>
+                    {% endfor %}
+                  </ul>
+                  {% endif %}
+                </td>
+              </tr>
+              {% endfor %}
             </tbody>
-        </table>
-    
-        <div>
-            <button type="submit">Add Food Items</button>
+          </table>
         </div>
-    </form>
-    <hr>
-    <h4>For reference, a standard Campus Dining serving spoon holds around 4oz of food.</h4>
-</body>
+
+        <div class="d-grid mt-4">
+          <button type="submit" class="btn btn-outline-light">
+            Add Food Items
+          </button>
+        </div>
+      </form>
+
+      <hr />
+      <p class="text-center mt-4">
+        <strong>Note:</strong> A standard Campus Dining serving spoon holds
+        around 4oz of food.
+      </p>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  </body>
 </html>

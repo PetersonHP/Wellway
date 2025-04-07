@@ -1,60 +1,150 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Wellway Web App (alpha)</title>
-    <link rel="stylesheet" href="/static/css/styles.css">
+
+    <!-- Bootstrap 5 CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+
+    <style>
+        body {
+            background-color: #121212;
+            color: #f1f1f1;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 2rem;
+        }
+
+        .login-container {
+            background-color: #1e1e1e;
+            padding: 2rem 2.5rem;
+            border-radius: 16px;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 0 25px rgba(255, 255, 255, 0.03);
+        }
+
+        h2 {
+            margin-bottom: 1.5rem;
+            text-align: center;
+            color: #ffffff;
+        }
+
+        .form-label {
+            color: #cccccc;
+            margin-bottom: 0.5rem;
+        }
+
+        .form-control:focus {
+            background-color: #2a2a2a;
+            border-color: #0d6efd;
+            box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+        }
+
+        .form-control {
+            background-color: #2a2a2a !important;
+            border: 1px solid #444 !important;
+            color: #ffffff !important;
+            caret-color: #ffffff !important;
+        }
+
+        .form-control::placeholder {
+            color: #bbbbbb !important;
+        }
+
+        button[type='submit'] {
+            width: 100%;
+            margin-top: 1rem;
+        }
+
+        .flash-message {
+            margin-bottom: 1rem;
+            padding: 0.75rem;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .flash-message.success {
+            background-color: #198754;
+            color: white;
+        }
+
+        .flash-message.error {
+            background-color: #dc3545;
+            color: white;
+        }
+
+        ul {
+            margin-top: 0.5rem;
+            padding-left: 1.2rem;
+            color: #ff6b6b;
+        }
+
+        li {
+            font-size: 0.9rem;
+        }
+    </style>
 
     <script>
         // Auto-hide flash messages after 3 seconds
         setTimeout(() => {
-          const messages = document.querySelectorAll('.flash-message');
-          messages.forEach(msg => msg.style.display = 'none');
+            const messages = document.querySelectorAll('.flash-message');
+            messages.forEach((msg) => (msg.style.display = 'none'));
         }, 3000);
-      </script>
+    </script>
 </head>
+
 <body>
-    <h2>Login</h2>
+    <div class="login-container">
+        <h2>Login</h2>
 
-    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}
-            {% for category, message in messages %}
-            <div class="flash-message {{ category }}">{{ message }}</div>
-            {% endfor %}
+        {% for category, message in messages %}
+        <div class="flash-message {{ category }}">{{ message }}</div>
+        {% endfor %}
         {% endif %}
-    {% endwith %}
+        {% endwith %}
 
-    <form method="POST" action="{{ url_for('login') }}">
-        {{ form.hidden_tag() }}
+        <form method="POST" action="{{ url_for('login') }}">
+            {{ form.hidden_tag() }}
 
-        <div>
-            {{ form.username.label }}
-            {{ form.username() }}
-            {% if form.username.errors %}
+            <div class="mb-3">
+                {{ form.username.label(class_="form-label") }}
+                {{ form.username(class_="form-control", placeholder="Username") }}
+                {% if form.username.errors %}
                 <ul>
                     {% for error in form.username.errors %}
-                        <li>{{ error }}</li>
+                    <li>{{ error }}</li>
                     {% endfor %}
                 </ul>
-            {% endif %}
-        </div>
+                {% endif %}
+            </div>
 
-        <div>
-            {{ form.password.label }}
-            {{ form.password() }}
-            {% if form.password.errors %}
+            <div class="mb-3">
+                {{ form.password.label(class_="form-label") }}
+                {{ form.password(class_="form-control", placeholder="Password") }}
+                {% if form.password.errors %}
                 <ul>
                     {% for error in form.password.errors %}
-                        <li>{{ error }}</li>
+                    <li>{{ error }}</li>
                     {% endfor %}
                 </ul>
-            {% endif %}
-        </div>
+                {% endif %}
+            </div>
 
-        <div>
-            <button type="submit">Login</button>
-        </div>
-    </form>
+            <button type="submit" class="btn btn-primary">Login</button>
+        </form>
+    </div>
+
+    <!-- Bootstrap Bundle JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
+
 </html>

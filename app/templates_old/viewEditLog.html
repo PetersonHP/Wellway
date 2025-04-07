@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wellway Web App (alpha)</title>
+    <link rel="stylesheet" href="/static/css/styles.css">
+
+    <script>
+        // Auto-hide flash messages after 3 seconds
+        setTimeout(() => {
+          const messages = document.querySelectorAll('.flash-message');
+          messages.forEach(msg => msg.style.display = 'none');
+        }, 3000);
+      </script>
+</head>
+<body>
+    <h2>View or Edit Today's Food Log</h2>
+    <hr>
+    <form method="POST" action="{{ url_for('delete_log') }}" onsubmit="return confirm('Are you sure you want to delete today\'s log?');">
+        <button type="submit" class="btn btn-danger">Delete Today's Log</button>
+    </form>
+    <hr>
+    <a href="{{url_for('dashboard')}}">Go Back</a>
+</body>
