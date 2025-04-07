@@ -4,12 +4,12 @@ Handles interactions with the Wellway database
 
 import datetime
 from datetime import datetime
+import json
 import os
 import uuid
 from typing import Type
 
 from common import log
-import scraper
 
 from dotenv import load_dotenv
 from flask_login import UserMixin
@@ -97,6 +97,13 @@ class FoodLog(Base):
     Food_logs link users to recipe reports on each day.
     This allows a user to track what they ate in a day and see the nutrition info. 
     '''
+    # https://www.nal.usda.gov/programs/fnic#:~:text=How%20many%20calories%20are%20in,provides%209%20calories%20per%20gram.
+    CALS_PER_GRAM = {
+        'carbs': 4,
+        'protein': 4,
+        'fat': 9
+    }
+
     __tablename__ = 'food_logs'
 
     log_id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
@@ -108,6 +115,68 @@ class FoodLog(Base):
     log = Column(JSON, nullable=False)
 
     user = relationship("User", backref="food_logs")
+
+    def get_summary(self) -> dict:
+        '''
+        Returns a nutrition summary dict structured as follows:
+
+        {
+            'total_calories': int,
+
+            'grams_protein': int,
+            'grams_fat': int,
+            'grams_carbs': int,
+
+            'percent_protein': float,
+            'percent_fat': float,
+            'percent_carbs': float
+        }
+        '''
+        result = {
+            'total_calories': 0,
+
+            'grams_protein': 0,
+            'grams_fat': 0,
+            'grams_carbs': 0,
+
+            'percent_protein': 0,
+            'percent_fat': 0,
+            'percent_carbs': 0
+        }
+
+        this_log = json.loads(self.log)
+        with sqlalchemy.orm.Session(_engine) as session:
+            try:
+                for _, recipes in this_log['meals'].items():
+                    for report_tuple in recipes:
+                        report = session.get(RecipeReport, report_tuple[0])
+                        qty = report_tuple[1]
+
+                        result['total_calories'] += int(report.calories) * qty
+                        result['grams_protein'] += int(report.protein) * qty
+                        result['grams_fat'] += int(report.fat) * qty
+                        result['grams_carbs'] += int(report.carbs) * qty
+
+                if result['total_calories'] > 0:
+                    result['percent_protein'] = result['grams_protein'] * \
+                        self.CALS_PER_GRAM['protein'] / \
+                        result['total_calories']
+                    result['percent_fat'] = result['grams_fat'] * \
+                        self.CALS_PER_GRAM['fat'] / result['total_calories']
+                    result['percent_carbs'] = result['grams_carbs'] * \
+                        self.CALS_PER_GRAM['protein'] / \
+                        result['total_calories']
+
+                return result
+
+            except Exception as e:
+                raise e
+
+    def get_full_report(self):
+        '''
+        Returns the full report of all nutritional information for this log
+        '''
+        # TODO: implement
 
 
 def store_nut_rpt(location: str, meal: str, date: datetime, report: pd.DataFrame) -> None:
@@ -225,6 +294,93 @@ def get_user_by_id(user_id: str) -> User | None:
             return None
 
 
+def _get_create_food_log(
+        user: User,
+        timestamp: datetime,
+        session: sqlalchemy.orm.Session
+) -> FoodLog:
+    '''
+    Gets the food log for [user] for the day of the [day_timestamp].
+
+    Creates an empty log if none exist for this user on this day.
+
+    Log JSON Schema:
+    {
+        user_id: uuid str,
+        log_date: datetime str ('%Y-%m-%d'),
+
+        meals: {
+            breakfast: list[(RecipeReport uuid str, quantity int)],
+            lunch: list[(RecipeReport uuid str, quantity int)],
+            dinner: list[(RecipeReport uuid str, quantity int)]
+        }
+    }
+    '''
+    day = timestamp.strftime('%Y-%m-%d')
+
+    result = session.query(FoodLog).filter(
+        FoodLog.user_id == user.user_id,
+        FoodLog.log_date == day
+    ).first()
+
+    if result is None:
+        # create new log
+        result = FoodLog(
+            log_id=uuid.uuid4(),
+            log_date=day,
+            user_id=user.user_id,
+
+            log=json.dumps({
+                'user_id': str(user.user_id),
+                'log_date': day,
+
+                'meals': {
+                    'breakfast': [],
+                    'lunch': [],
+                    'dinner': []
+                }
+            })
+        )
+        session.add(result)
+        session.commit()
+
+    return result
+
+
+def get_create_food_log(user: User, timestamp: datetime):
+    '''
+    public facing version of _get_create_food_log
+    '''
+    with sqlalchemy.orm.Session(_engine) as session:
+        try:
+            return _get_create_food_log(user, timestamp, session)
+        except Exception as e:
+            session.rollback()
+            raise e
+
+
+def add_foods_to_log(user: User, meal: str, timestamp: datetime, recipes: list[(str, int)]):
+    '''
+    Adds a list of recipes to a users daily food log
+    '''
+
+    with sqlalchemy.orm.Session(_engine) as session:
+        try:
+            current_log = _get_create_food_log(user, timestamp, session)
+            log_dict = json.loads(current_log.log)
+
+            lower_meal = meal.lower()
+            for recipe_id in recipes:
+                log_dict['meals'][lower_meal].append(recipe_id)
+
+            current_log.log = json.dumps(log_dict)
+            session.commit()
+
+        except Exception as e:
+            session.rollback()
+            raise e
+
+
 def _delete_rows(model: Type[Base]) -> None:
     '''
     Deletes all rows from the table corresponding to [model]
@@ -242,19 +398,18 @@ def main():
     '''
     main method for testing purposes
     '''
-    # location = 'roma'
-    # meal = 'Dinner'
-    # todays_date = datetime.date.today()
 
-    # nut_rpt = scraper.get_meal_info(location, meal, todays_date)
-    # store_nut_rpt(location, meal, todays_date, nut_rpt)
+    # _delete_rows(FoodLog)
+    # tiger = get_user_by_id('73fde1ce-5888-4999-a647-8ac68a9755ab')
+    # food = get_create_food_log(tiger, datetime.now())
+    # add_foods_to_log(
+    #     tiger,
+    #     'dinner',
+    #     datetime.now(),
+    #     [('81dc6102-c473-4b6e-911d-81250518c845', 2)]
+    # )
 
-    # with sqlalchemy.orm.Session(_engine) as session:
-    #     result = session.query(RecipeReport)
-    #     print(result.all())
-
-    # _delete_rows(RecipeReport)
-    # _delete_rows(User)
+    # print(food.get_summary())
 
 
 if __name__ == '__main__':

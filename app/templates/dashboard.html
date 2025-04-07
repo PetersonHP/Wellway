@@ -7,7 +7,30 @@
     <link rel="stylesheet" href="/static/css/styles.css">
 </head>
 <body>
-    You are currently logged in as {{current_user.username}}.
+    <h2>Daily Nutrition Summary for {{current_user.username}}</h2>
+    <hr>
+    <table border="2">
+        <tr>
+            <th>Total Calories</th>
+            <td>{{ daily_summary['total_calories'] }}</td>
+        </tr>
+        <tr></tr>
+        <tr>
+            <th>Protein</th>
+            <td>{{ "%.1f"|format(daily_summary['percent_protein'] * 100) }}%</td>
+            <td>{{ daily_summary['grams_protein'] }}g</td>
+        </tr>
+        <tr>
+            <th>Fat</th>
+            <td>{{ "%.1f"|format(daily_summary['percent_fat'] * 100) }}%</td>
+            <td>{{ daily_summary['grams_fat'] }}g</td>
+        </tr>
+        <tr>
+            <th>Carbs</th>
+            <td>{{ "%.1f"|format(daily_summary['percent_carbs'] * 100) }}%</td>
+            <td>{{ daily_summary['grams_carbs'] }}g</td>
+        </tr>
+    </table>
     <hr>
     <a href="/signout">Sign Out</a>
 </body>

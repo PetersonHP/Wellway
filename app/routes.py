@@ -80,7 +80,10 @@ def dashboard():
     '''
     dashboard home screen for a user
     '''
-    return flask.render_template('dashboard.html')
+    current_log = database.get_create_food_log(flask_login.current_user, datetime.now())
+    daily_summary = current_log.get_summary()
+
+    return flask.render_template('dashboard.html', daily_summary=daily_summary)
 
 
 @app.route('/signout', methods=['GET'])
