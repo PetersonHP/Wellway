@@ -2,6 +2,11 @@
 Common utilities for the Wellway app
 '''
 
+from datetime import datetime
+import logging
+import os
+import uuid
+
 CJL = 'cjl'
 FORBES = 'forbes'
 GRAD_COLLEGE = 'gradcollege'
@@ -25,3 +30,10 @@ LUNCH = 'Lunch'
 DINNER = 'Dinner'
 
 MEALS = [BREAKFAST, LUNCH, DINNER]
+
+
+log = logging.getLogger('Wellway')
+timestamp = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
+logging.basicConfig(filename=f'{os.path.dirname(os.path.abspath(__file__))}' +
+                    f'/logs/wellway-{timestamp}.log', 
+                    level=logging.INFO)

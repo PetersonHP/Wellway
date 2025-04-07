@@ -29,6 +29,8 @@ CREATE TABLE Recipe_Reports (
 	sodium float8,
 	vitamin_A float8,
 	vitamin_B float8
+
+	CONSTRAINT unique_combination UNIQUE (report_date, report_location, report_meal, recipe_name)
 );
 
 -- Users tracks users of the app. This will likely be updated in the future 
@@ -37,17 +39,19 @@ CREATE TABLE Users (
 	user_Id uuid PRIMARY KEY,
 	username varchar(255) UNIQUE NOT NULL,
 	email varchar(255) UNIQUE NOT NULL,
-	password_Hash varchar(255),
-	created_At timestamp NOT NULL
+	password_hash varchar(255),
+	created_at timestamp NOT NULL,
+	is_active boolean NOT NULL DEFAULT TRUE
 );
 
 -- Food_logs link users to recipe reports on each day.
--- This allows a user to track what they ate in a day and see the nutrition info. 
+-- This allows a user to track what they ate in a day and see the nutrition info.
 CREATE TABLE Food_Logs (
 	log_Id uuid PRIMARY KEY,
-	user_Id uuid NOT NULL,
-	report_Id uuid NOT NULL,
 	log_Date date NOT NULL,
-	FOREIGN KEY (user_Id) REFERENCES Users(user_Id) ON DELETE CASCADE,
-	FOREIGN KEY (report_Id) REFERENCES Recipe_Reports(report_Id)
+	user_Id uuid NOT NULL,
+
+	log json NOT NULL,
+
+	FOREIGN KEY (user_Id) REFERENCES Users(user_Id) ON DELETE CASCADE
 );
