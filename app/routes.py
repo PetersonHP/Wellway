@@ -4,14 +4,12 @@ Handle client http requests
 
 import atexit
 from datetime import datetime
-import logging
 import os
-import uuid
 
-from common import DINING_HALLS, MEALS
+from common import DINING_HALLS, MEALS, log
 import database
 from database import User
-from forms import RegistrationForm, LoginForm, ForgotPasswordForm
+from forms import RegistrationForm, LoginForm
 import scraper
 
 from apscheduler.schedulers.background import BackgroundScheduler
@@ -19,7 +17,7 @@ import dotenv
 import flask
 from flask import Flask
 import flask_login
-from flask_login import LoginManager
+from flask_login import LoginManager, login_required
 
 # initialization code
 dotenv.load_dotenv()
@@ -29,10 +27,6 @@ app.secret_key = os.environ['SECRET_KEY']
 
 login_manager = LoginManager()
 login_manager.init_app(app)
-
-log = logging.getLogger(__name__)
-logging.basicConfig(filename=f'{os.path.dirname(os.path.abspath(__file__))}' +
-                    f'/logs/wellway-{uuid.uuid1()}.log', level=logging.INFO)
 
 
 def scrape_nutrition_daily():
@@ -64,10 +58,12 @@ scheduler.start()
 atexit.register(scheduler.shutdown)
 
 
-# authentication stuff
 @login_manager.user_loader
 def load_user(user_id: str) -> User | None:
-    return database.get_user(user_id)
+    '''
+    load_user function for flask_login
+    '''
+    return database.get_user_by_id(user_id)
 
 
 @app.route('/', methods=['GET'])
@@ -78,6 +74,25 @@ def index():
     return flask.make_response(flask.render_template('index.html'))
 
 
+@app.route('/dashboard', methods=['GET'])
+@login_required
+def dashboard():
+    '''
+    dashboard home screen for a user
+    '''
+    return flask.render_template('dashboard.html')
+
+
+@app.route('/signout', methods=['GET'])
+@login_required
+def signout():
+    '''
+    signs out the currently signed in user
+    '''
+    flask_login.logout_user()
+    return flask.redirect(flask.url_for('index'))
+
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     '''
@@ -85,37 +100,57 @@ def login():
     '''
     form = LoginForm(flask.request.form)
     if form.validate_on_submit():
-        # Login and validate the user.
-        # user should be an instance of your `User` class
-        # TODO: implement
-        flask_login.login_user(user)
+        current_user = database.validate_user(
+            form.username.data, form.password.data)
+        if not current_user:
+            # FAIL
+            log.info('Failed to login user %s', form.username)
+            flask.flash('Incorrect username or password.')
+            return flask.render_template('loginPage.html', form=form)
 
-        flask.flash('Logged in successfully.')
+        # SUCCESS
+        flask_login.login_user(current_user)
+        log.info('Successfully logged in user %s', form.username)
+        flask.flash(f'Welcome {current_user.username}!')
 
-        next_page = flask.request.args.get('next')
-        return flask.redirect(next_page or flask.url_for('index'))
-    
-    return flask.render_template('login.html', form=form)
+        return flask.redirect(flask.url_for('dashboard'))
+
+    return flask.render_template('loginPage.html', form=form)
 
 
-@app.route('/register')
+@app.route('/register', methods=['GET', 'POST'])
 def register():
     '''
     register as a new user
     '''
-    # TODO: implement
     form = RegistrationForm(flask.request.form)
-    return flask.render_template('forms/register.html', form=form)
+    if form.validate_on_submit():
+        new_id = database.register_user(form.username.data,
+                                        form.email.data,
+                                        form.password.data,
+                                        datetime.now()
+                                        )
+        if not new_id:
+            flask.flash(f'User with name {form.username.data} and or ' +
+                        f'email {form.email.data} is already registered.')
+            return flask.render_template('registerPage.html', form=form)
+        else:
+            flask.flash(f'Welcome to Wellway {form.username.data}!')
+            flask_login.login_user(load_user(str(new_id)))
+
+            return flask.redirect(flask.url_for('dashboard'))
+
+    return flask.render_template('registerPage.html', form=form)
 
 
-@app.route('/forgot')
-def forgot():
-    '''
-    handle a forgotten password
-    '''
-    # TODO: implement
-    form = ForgotPasswordForm(flask.request.form)
-    return flask.render_template('forms/forgot.html', form=form)
+# @app.route('/forgot')
+# def forgot():
+#     '''
+#     handle a forgotten password
+#     '''
+#     # TODO: implement
+#     form = ForgotPasswordForm(flask.request.form)
+#     return flask.render_template('forgot.html', form=form)
 
 
 # @app.route('/getReport', methods=['POST'])

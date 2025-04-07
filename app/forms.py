@@ -2,16 +2,16 @@
 Forms related to user registration and login
 '''
 
-from flask_wtf import Form
+from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField
 from wtforms import validators as val
 
 
-class RegistrationForm(Form):
+class RegistrationForm(FlaskForm):
     '''
     form to register a new user
     '''
-    name = StringField(
+    username = StringField(
         'Username', validators=[val.DataRequired(),
                                 val.Length(min=4, max=30,
                                            message='Must be between 4 and 30 characters.')]
@@ -33,15 +33,15 @@ class RegistrationForm(Form):
     )
 
 
-class LoginForm(Form):
+class LoginForm(FlaskForm):
     '''
     form to login an existing user
     '''
-    name = StringField('Username', [val.DataRequired()])
+    username = StringField('Username', [val.DataRequired()])
     password = PasswordField('Password', [val.DataRequired()])
 
 
-class ForgotPasswordForm(Form):
+class ForgotPasswordForm(FlaskForm):
     '''
     form for a user who forgot their password
     '''

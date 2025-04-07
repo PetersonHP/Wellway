@@ -3,10 +3,12 @@ Handles interactions with the Wellway database
 '''
 
 import datetime
+from datetime import datetime
 import os
 import uuid
 from typing import Type
 
+from common import log
 import scraper
 
 from dotenv import load_dotenv
@@ -16,6 +18,7 @@ import sqlalchemy
 from sqlalchemy import Boolean, Column, Date, Float, ForeignKey, JSON, String, TIMESTAMP
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import DeclarativeBase, relationship
+from werkzeug.security import generate_password_hash, check_password_hash
 
 
 load_dotenv()
@@ -27,6 +30,8 @@ if LOCAL_DB:
     _DATABASE_URL = os.environ['INTERNAL_DB_URL']
 else:
     _DATABASE_URL = os.environ['EXTERNAL_DB_URL']
+
+log.info('Searching for DB at %s', _DATABASE_URL)
 
 _engine = sqlalchemy.create_engine(_DATABASE_URL)
 
@@ -81,14 +86,10 @@ class User(Base, UserMixin):
     email = Column(String(255), unique=True, nullable=False)
     password_hash = Column(String(255))
     created_at = Column(TIMESTAMP, nullable=False)
-    _is_active = Column(Boolean, nullable=False, default=True)
+    is_active = Column(Boolean, nullable=False, default=True)
 
     def get_id(self):
         return str(self.user_id)
-
-    @property
-    def is_active(self):
-        return self._is_active
 
 
 class FoodLog(Base):
@@ -155,7 +156,55 @@ def store_nut_rpt(location: str, meal: str, date: datetime, report: pd.DataFrame
             raise e
 
 
-def get_user(user_id: str) -> User | None:
+def register_user(username: str, email: str, password: str, timestamp: datetime) -> UUID | None:
+    '''
+    Attempts to register a new user. 
+
+    Returns the new user_id if successful or None if the user already exists. 
+
+    Raises an exception if there is a database problem.
+    '''
+    new_user = User(
+        user_id=uuid.uuid4(),
+        username=username,
+        email=email,
+        password_hash=generate_password_hash(password),
+        created_at=timestamp,
+    )
+
+    with sqlalchemy.orm.Session(_engine) as session:
+        existing_user = session.query(User).filter(
+            (User.username == username) | (User.email == email)
+        ).first()
+
+        if existing_user:
+            return None
+
+        try:
+            session.add(new_user)
+            session.commit()
+            return new_user.user_id
+        except Exception as e:
+            session.rollback()
+            raise e
+
+
+def validate_user(username: str, password: str) -> User | None:
+    '''
+    Validates a given username and password combo.
+
+    If the combo is valid, returns the User. Otherwise returns None.
+    '''
+    with sqlalchemy.orm.Session(_engine) as session:
+        user = session.query(User).filter(User.username == username).first()
+
+        if user and check_password_hash(user.password_hash, password):
+            return user
+
+        return None
+
+
+def get_user_by_id(user_id: str) -> User | None:
     '''
     Returns the User object corresponding to the provided user_id
 
@@ -193,18 +242,19 @@ def main():
     '''
     main method for testing purposes
     '''
-    location = 'roma'
-    meal = 'Dinner'
-    todays_date = datetime.date.today()
+    # location = 'roma'
+    # meal = 'Dinner'
+    # todays_date = datetime.date.today()
 
-    nut_rpt = scraper.get_meal_info(location, meal, todays_date)
-    store_nut_rpt(location, meal, todays_date, nut_rpt)
+    # nut_rpt = scraper.get_meal_info(location, meal, todays_date)
+    # store_nut_rpt(location, meal, todays_date, nut_rpt)
 
-    with sqlalchemy.orm.Session(_engine) as session:
-        result = session.query(RecipeReport)
-        print(result.all())
+    # with sqlalchemy.orm.Session(_engine) as session:
+    #     result = session.query(RecipeReport)
+    #     print(result.all())
 
-    _delete_rows(RecipeReport)
+    # _delete_rows(RecipeReport)
+    # _delete_rows(User)
 
 
 if __name__ == '__main__':
