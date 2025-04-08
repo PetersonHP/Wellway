@@ -1,0 +1,44 @@
+INFO:Wellway:Searching for DB at postgresql://postgres:W311%W4y&4dm1n@localhost:5432/wellwaydb
+INFO:apscheduler.scheduler:Adding job tentatively -- it will be properly scheduled when the scheduler starts
+INFO:apscheduler.scheduler:Added job "scrape_nutrition_daily" to job store "default"
+INFO:apscheduler.scheduler:Scheduler started
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 111-886-960
+INFO:werkzeug:127.0.0.1 - - [07/Apr/2025 14:04:18] "GET / HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [07/Apr/2025 14:04:31] "GET /login HTTP/1.1" 200 -
+INFO:Wellway:Successfully logged in user <input id="username" name="username" required type="text" value="tiger">
+INFO:werkzeug:127.0.0.1 - - [07/Apr/2025 14:04:38] "[32mPOST /login HTTP/1.1[0m" 302 -
+INFO:werkzeug:127.0.0.1 - - [07/Apr/2025 14:04:38] "GET /dashboard HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [07/Apr/2025 14:04:43] "GET /addFood/ HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [07/Apr/2025 14:04:44] "[33mGET /static/images/roma.jpg HTTP/1.1[0m" 404 -
+INFO:werkzeug:127.0.0.1 - - [07/Apr/2025 14:04:44] "[33mGET /static/images/yeh.jpg HTTP/1.1[0m" 404 -
+INFO:werkzeug:127.0.0.1 - - [07/Apr/2025 14:04:44] "[33mGET /static/images/whitman.jpg HTTP/1.1[0m" 404 -
+INFO:werkzeug:127.0.0.1 - - [07/Apr/2025 14:04:44] "[33mGET /static/images/cjl.jpg HTTP/1.1[0m" 404 -
+INFO:werkzeug:127.0.0.1 - - [07/Apr/2025 14:04:44] "[33mGET /static/images/forbes.jpg HTTP/1.1[0m" 404 -
+INFO:werkzeug:127.0.0.1 - - [07/Apr/2025 14:04:44] "[33mGET /static/images/gradcollege.jpg HTTP/1.1[0m" 404 -
+INFO:werkzeug:127.0.0.1 - - [07/Apr/2025 14:06:08] "GET /addFood/?location=whitman HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [07/Apr/2025 14:06:14] "GET /addFood/?location=whitman&meal=Lunch HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [07/Apr/2025 14:06:47] "[32mPOST /addFood/?location=whitman&meal=Lunch HTTP/1.1[0m" 302 -
+INFO:werkzeug:127.0.0.1 - - [07/Apr/2025 14:06:47] "GET /dashboard HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [07/Apr/2025 14:07:28] "[32mGET /signout HTTP/1.1[0m" 302 -
+INFO:werkzeug:127.0.0.1 - - [07/Apr/2025 14:07:28] "GET / HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [07/Apr/2025 14:07:30] "GET /login HTTP/1.1" 200 -
+INFO:Wellway:Successfully logged in user <input id="username" name="username" required type="text" value="tiger">
+INFO:werkzeug:127.0.0.1 - - [07/Apr/2025 14:07:36] "[32mPOST /login HTTP/1.1[0m" 302 -
+INFO:werkzeug:127.0.0.1 - - [07/Apr/2025 14:07:36] "GET /dashboard HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [07/Apr/2025 14:07:40] "GET /viewEditLog/ HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [07/Apr/2025 14:07:43] "[32mPOST /deleteLog HTTP/1.1[0m" 302 -
+INFO:werkzeug:127.0.0.1 - - [07/Apr/2025 14:07:43] "GET /dashboard HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [07/Apr/2025 14:08:01] "GET /addFood/ HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [07/Apr/2025 14:08:01] "[33mGET /static/images/roma.jpg HTTP/1.1[0m" 404 -
+INFO:werkzeug:127.0.0.1 - - [07/Apr/2025 14:08:01] "[33mGET /static/images/yeh.jpg HTTP/1.1[0m" 404 -
+INFO:werkzeug:127.0.0.1 - - [07/Apr/2025 14:08:01] "[33mGET /static/images/forbes.jpg HTTP/1.1[0m" 404 -
+INFO:werkzeug:127.0.0.1 - - [07/Apr/2025 14:08:01] "[33mGET /static/images/cjl.jpg HTTP/1.1[0m" 404 -
+INFO:werkzeug:127.0.0.1 - - [07/Apr/2025 14:08:01] "[33mGET /static/images/gradcollege.jpg HTTP/1.1[0m" 404 -
+INFO:werkzeug:127.0.0.1 - - [07/Apr/2025 14:08:01] "[33mGET /static/images/whitman.jpg HTTP/1.1[0m" 404 -
+INFO:werkzeug:127.0.0.1 - - [07/Apr/2025 14:08:04] "GET /addFood/?location=forbes HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [07/Apr/2025 14:08:06] "GET /addFood/?location=forbes&meal=Dinner HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [07/Apr/2025 14:08:24] "[32mPOST /addFood/?location=forbes&meal=Dinner HTTP/1.1[0m" 302 -
+INFO:werkzeug:127.0.0.1 - - [07/Apr/2025 14:08:24] "GET /dashboard HTTP/1.1" 200 -
+INFO:werkzeug: * Detected change in 'C:\\Users\\Peter\\Source\\Wellway\\app\\routes.py', reloading
+INFO:apscheduler.scheduler:Scheduler has been shut down

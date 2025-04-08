@@ -4,23 +4,21 @@ during meals at various Princeton University dining halls from menus.princeton.e
 '''
 
 import datetime
+import requests
 import urllib
 
 from common import DHALL_ARGS
 
 from bs4 import BeautifulSoup
 import pandas as pd
-from selenium import webdriver
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
 
 
-CAMPUS_DINING_URL = 'https://menus.princeton.edu/dining/_Foodpro/online-menu/pickMenu.asp'
+PICK_MENU_URL = 'https://menus.princeton.edu/dining/_Foodpro/online-menu/pickMenu.asp'
+NUT_RPT_URL = 'https://menus.princeton.edu/dining/_Foodpro/online-menu/nutRpt.asp'
 CAMPUS_DINING_ENC = 'ISO-8859-1'
 
 
-def _get_dining_url(location: str, meal: str, time: datetime) -> str:
+def _get_dining_url(base: str, location: str, meal: str, time: datetime) -> str:
     '''
     returns the url to get the menu for [meal] at [location] at [time] 
     from menus.princeton.edu'
@@ -33,10 +31,10 @@ def _get_dining_url(location: str, meal: str, time: datetime) -> str:
         'mealName': meal,
         'Name': 'Princeton University Campus Dining'
     }
-    return f'{CAMPUS_DINING_URL}?{urllib.parse.urlencode(query_args)}'
+    return f'{base}?{urllib.parse.urlencode(query_args)}'
 
 
-def _get_nut_rpt(form_url: str) -> str:
+def _get_nut_rpt(location: str, meal: str, time: datetime) -> str:
     '''
     Fills out the menu form to request a nutrition report for one of each item.
     Returns the resulting report HTML as a string.
@@ -44,38 +42,49 @@ def _get_nut_rpt(form_url: str) -> str:
     Returns an empty string if information is not available for the requested meal.
     '''
 
-    driver = webdriver.Chrome()
+    try:
+        options_page = requests.get(
+            _get_dining_url(PICK_MENU_URL, location, meal, time),
+            timeout=10
+        )
+    except TimeoutError:
+        return ''
+
+    if options_page.status_code != 200:
+        return ''
+
+    options_soup = BeautifulSoup(options_page.text, 'html5lib')
+    options_divs = options_soup.find_all(
+        'div', {'class': 'pickmenucoldispname'})
+    if len(options_divs) == 0:
+        return ''
+
+    recipe_codes = []
+    for option in options_divs:
+        recipe_codes.append(option.find(
+            'input', {'name': 'recipe'}).get('value'))
+
+    post_data = {
+        'recipe': [],
+        'QTY': [1 for _ in recipe_codes]
+    }
+
+    for recipe in recipe_codes:
+        post_data['recipe'].append(recipe)
 
     try:
-        driver.get(form_url)
-        WebDriverWait(driver, 10).until(
-            EC.presence_of_element_located((By.TAG_NAME, "body"))
+        nut_rpt = requests.post(
+            _get_dining_url(NUT_RPT_URL, location, meal, time),
+            data=post_data,
+            timeout=10
         )
+    except TimeoutError:
+        return ''
 
-        # return empty string if no data
-        if "No Data Available" in driver.page_source:
-            return ""
+    if nut_rpt.status_code != 200:
+        return ''
 
-        WebDriverWait(driver, 10).until(
-            EC.presence_of_element_located((By.ID, "pickMenuTable"))
-        )
-
-        # check boxes and submit form
-        checkboxes = driver.find_elements(By.NAME, "recipe")
-        for box in checkboxes:
-            if not box.is_selected():
-                box.click()
-        submit = driver.find_element(By.XPATH, "//input[@type='submit']")
-        submit.click()
-
-        WebDriverWait(driver, 10).until(
-            EC.presence_of_element_located((By.CLASS_NAME, "nutrptbody"))
-        )
-
-        return driver.page_source
-
-    finally:
-        driver.quit()
+    return nut_rpt.text
 
 
 def _parse_nut_rpt(raw: str) -> pd.DataFrame | None:
@@ -165,8 +174,19 @@ def get_meal_info(location: str, meal: str, date: datetime) -> pd.DataFrame:
                          'Valid meals include \'Breakfast\', \'Lunch\', and \'Dinner\'.')
 
     # scrape the data
-    full_url = _get_dining_url(location, meal, date)
-    raw_report = _get_nut_rpt(full_url)
+    raw_report = _get_nut_rpt(location, meal, date)
     if raw_report == '':
         return pd.DataFrame()
     return _parse_nut_rpt(raw_report)
+
+
+# def main():
+#     '''
+#     main method for testing purpose
+#     '''
+#     from datetime import datetime
+#     print(get_meal_info('cjl', 'Lunch', datetime.now()))
+
+
+# if __name__ == '__main__':
+#     main()

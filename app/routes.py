@@ -240,8 +240,7 @@ def main():
     '''
     main method for testing
     '''
-    # scrape_nutrition_daily()
-    # database._delete_rows(database.RecipeReport)
+    scrape_nutrition_daily()
 
 
 if __name__ == '__main__':
