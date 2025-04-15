@@ -30,10 +30,6 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 
 
-# track the last time nutrition info was scraped
-nutrition_last_updated = ''
-
-
 def scrape_nutrition_daily():
     '''
     Scrape all dining hall nutrition info for the current day and store 
@@ -55,6 +51,11 @@ def scrape_nutrition_daily():
                     database.store_nut_rpt(hall, meal, todays_date, report)
                 except Exception as e:
                     print(e)
+
+
+# scrape on run if necessary
+if os.environ['SCRAPE_ON_RUN'] == 'True':
+    scrape_nutrition_daily()
 
 
 # Schedule the nutrition scraping task
@@ -202,6 +203,7 @@ def view_edit_log():
     '''
     return flask.render_template('viewEditLog.html')
 
+
 @app.route('/deleteLog', methods=['POST'])
 @login_required
 def delete_log():
@@ -210,6 +212,7 @@ def delete_log():
     '''
     database._delete_food_log(flask_login.current_user, datetime.now())
     return flask.redirect(flask.url_for('dashboard'))
+
 
 @app.route('/comingSoon', methods=['GET'])
 def coming_soon():

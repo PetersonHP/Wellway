@@ -30,6 +30,7 @@ if LOCAL_DB:
     _DATABASE_URL = os.environ['INTERNAL_DB_URL']
 else:
     _DATABASE_URL = os.environ['EXTERNAL_DB_URL']
+    
 
 log.info('Searching for DB at %s', _DATABASE_URL)
 
