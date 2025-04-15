@@ -163,6 +163,10 @@ def add_food(location=None, meal=None):
     '''
     Add new foods to today's log
     '''
+    # not ideal code here... 
+    if len(database.get_stored_menu(location, meal, datetime.now)) == 0:
+        scrape_nutrition_daily()
+
     location = flask.request.args.get('location', None)
     meal = flask.request.args.get('meal', None)
 
