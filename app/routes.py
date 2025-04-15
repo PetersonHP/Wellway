@@ -208,6 +208,9 @@ def delete_log():
     database._delete_food_log(flask_login.current_user, datetime.now())
     return flask.redirect(flask.url_for('dashboard'))
 
+@app.route('/comingSoon', methods=['GET'])
+def coming_soon():
+    return flask.render_template('comingSoon.html')
 
 # @app.route('/forgot')
 # def forgot():
