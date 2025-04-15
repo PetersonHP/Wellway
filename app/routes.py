@@ -2,6 +2,7 @@
 Handle client http requests
 '''
 
+from apscheduler.triggers.cron import CronTrigger
 import atexit
 from datetime import datetime
 import os
@@ -29,6 +30,10 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 
 
+# track the last time nutrition info was scraped
+nutrition_last_updated = ''
+
+
 def scrape_nutrition_daily():
     '''
     Scrape all dining hall nutrition info for the current day and store 
@@ -51,7 +56,10 @@ def scrape_nutrition_daily():
 
 # Schedule the nutrition scraping task
 scheduler = BackgroundScheduler()
-scheduler.add_job(func=scrape_nutrition_daily, trigger="interval", days=1)
+scheduler.add_job(
+    func=scrape_nutrition_daily,
+    trigger=CronTrigger(hour=6, minute=0)  # Runs daily at 6:00 AM
+)
 scheduler.start()
 
 # Shut down the scheduler when exiting the app

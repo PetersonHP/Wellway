@@ -1,0 +1,34 @@
+INFO:Wellway:Searching for DB at postgresql://postgres:W311%W4y&4dm1n@localhost:5432/wellwaydb
+INFO:apscheduler.scheduler:Adding job tentatively -- it will be properly scheduled when the scheduler starts
+INFO:apscheduler.scheduler:Added job "scrape_nutrition_daily" to job store "default"
+INFO:apscheduler.scheduler:Scheduler started
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 111-886-960
+INFO:werkzeug:127.0.0.1 - - [08/Apr/2025 17:43:12] "GET / HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [08/Apr/2025 17:43:12] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
+INFO:werkzeug:127.0.0.1 - - [08/Apr/2025 17:43:17] "GET /login HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [08/Apr/2025 17:43:23] "GET /login HTTP/1.1" 200 -
+INFO:Wellway:Successfully logged in user <input id="username" name="username" required type="text" value="tiger">
+INFO:werkzeug:127.0.0.1 - - [08/Apr/2025 17:43:28] "[32mPOST /login HTTP/1.1[0m" 302 -
+INFO:werkzeug:127.0.0.1 - - [08/Apr/2025 17:43:29] "GET /dashboard HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [08/Apr/2025 17:43:34] "GET /addFood/ HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [08/Apr/2025 17:43:34] "[33mGET /static/images/roma.jpg HTTP/1.1[0m" 404 -
+INFO:werkzeug:127.0.0.1 - - [08/Apr/2025 17:43:34] "[33mGET /static/images/yeh.jpg HTTP/1.1[0m" 404 -
+INFO:werkzeug:127.0.0.1 - - [08/Apr/2025 17:43:34] "[33mGET /static/images/whitman.jpg HTTP/1.1[0m" 404 -
+INFO:werkzeug:127.0.0.1 - - [08/Apr/2025 17:43:34] "[33mGET /static/images/forbes.jpg HTTP/1.1[0m" 404 -
+INFO:werkzeug:127.0.0.1 - - [08/Apr/2025 17:43:34] "[33mGET /static/images/cjl.jpg HTTP/1.1[0m" 404 -
+INFO:werkzeug:127.0.0.1 - - [08/Apr/2025 17:43:34] "[33mGET /static/images/gradcollege.jpg HTTP/1.1[0m" 404 -
+INFO:werkzeug:127.0.0.1 - - [08/Apr/2025 17:43:51] "GET /addFood/ HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [08/Apr/2025 17:43:51] "[33mGET /static/images/roma.jpg HTTP/1.1[0m" 404 -
+INFO:werkzeug:127.0.0.1 - - [08/Apr/2025 17:43:52] "[33mGET /static/images/yeh.jpg HTTP/1.1[0m" 404 -
+INFO:werkzeug:127.0.0.1 - - [08/Apr/2025 17:43:52] "[33mGET /static/images/whitman.jpg HTTP/1.1[0m" 404 -
+INFO:werkzeug:127.0.0.1 - - [08/Apr/2025 17:43:52] "[33mGET /static/images/cjl.jpg HTTP/1.1[0m" 404 -
+INFO:werkzeug:127.0.0.1 - - [08/Apr/2025 17:43:52] "[33mGET /static/images/forbes.jpg HTTP/1.1[0m" 404 -
+INFO:werkzeug:127.0.0.1 - - [08/Apr/2025 17:43:52] "[33mGET /static/images/gradcollege.jpg HTTP/1.1[0m" 404 -
+INFO:werkzeug:127.0.0.1 - - [08/Apr/2025 17:43:53] "GET /addFood/?location=roma HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [08/Apr/2025 17:43:54] "GET /addFood/?location=roma&meal=Lunch HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [08/Apr/2025 17:44:07] "[32mPOST /addFood/?location=roma&meal=Lunch HTTP/1.1[0m" 302 -
+INFO:werkzeug:127.0.0.1 - - [08/Apr/2025 17:44:07] "GET /dashboard HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [08/Apr/2025 17:44:10] "GET /viewEditLog/ HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [08/Apr/2025 17:44:11] "[32mPOST /deleteLog HTTP/1.1[0m" 302 -
+INFO:werkzeug:127.0.0.1 - - [08/Apr/2025 17:44:11] "GET /dashboard HTTP/1.1" 200 -

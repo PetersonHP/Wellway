@@ -131,6 +131,12 @@
         {% endif %}
       {% endwith %}
 
+      <p class="text-center mt-4">
+        <strong>Note:</strong> A standard Campus Dining serving spoon holds
+        around 4 oz of food.
+      </p>
+
+      <hr />
       <form
         method="POST"
         action="{{ url_for('add_food', location=location, meal=meal) }}"
@@ -176,10 +182,11 @@
       </form>
 
       <hr />
-      <p class="text-center mt-4">
-        <strong>Note:</strong> A standard Campus Dining serving spoon holds
-        around 4oz of food.
-      </p>
+      <div class="d-grid mt-4">
+        <a href="/dashboard" class="btn btn-outline-danger">
+          Cancel Add Food
+        </a>
+      </div>
     </div>
 
     <!-- Bootstrap JS -->
