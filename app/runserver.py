@@ -3,8 +3,15 @@
 # runserver.py runs the web server for the Wellway web app
 
 import argparse
+import os
 import routes
 import sys
+
+import dotenv
+
+dotenv.load_dotenv()
+if os.environ['SCRAPE_ON_RUN'] == 'True':
+    routes.scrape_nutrition_daily()
 
 
 def main():

@@ -1,3 +1,6 @@
 .venv
 .planning
-./app/.env
+
+.env
+app/.env
+*.env

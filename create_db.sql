@@ -28,7 +28,7 @@ CREATE TABLE Recipe_Reports (
 	sugar float8,
 	sodium float8,
 	vitamin_A float8,
-	vitamin_B float8
+	vitamin_B float8,
 
 	CONSTRAINT unique_combination UNIQUE (report_date, report_location, report_meal, recipe_name)
 );

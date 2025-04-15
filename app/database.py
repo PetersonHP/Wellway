@@ -24,7 +24,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 load_dotenv()
 
 # set to True if using a locally running PostgreSQL database for debugging
-LOCAL_DB = True
+LOCAL_DB = False
 
 if LOCAL_DB:
     _DATABASE_URL = os.environ['INTERNAL_DB_URL']

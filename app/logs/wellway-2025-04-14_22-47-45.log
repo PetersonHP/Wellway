@@ -1,0 +1,12 @@
+INFO:Wellway:Searching for DB at postgresql://wellway_db_user:ZCqrCMpozRHCUti2ezv1NEh8koMWkfiI@dpg-cvusb6je5dus73e0i9r0-a.ohio-postgres.render.com/wellway_db
+INFO:apscheduler.scheduler:Adding job tentatively -- it will be properly scheduled when the scheduler starts
+INFO:apscheduler.scheduler:Added job "scrape_nutrition_daily" to job store "default"
+INFO:apscheduler.scheduler:Scheduler started
+INFO:Wellway:Scraping nutrition info at 2025-04-14 22:47:47.075290
+INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5555
+ * Running on http://10.48.91.128:5555
+INFO:werkzeug:[33mPress CTRL+C to quit[0m
+INFO:werkzeug: * Restarting with stat
+INFO:apscheduler.scheduler:Scheduler has been shut down

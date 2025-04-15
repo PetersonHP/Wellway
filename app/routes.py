@@ -51,7 +51,10 @@ def scrape_nutrition_daily():
                 log.debug('No data available for %s %s' % (hall, meal))
             else:
                 log.debug('Storing %s %s' % (hall, meal))
-                database.store_nut_rpt(hall, meal, todays_date, report)
+                try:
+                    database.store_nut_rpt(hall, meal, todays_date, report)
+                except Exception as e:
+                    print(e)
 
 
 # Schedule the nutrition scraping task
