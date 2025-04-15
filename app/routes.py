@@ -163,10 +163,6 @@ def add_food(location=None, meal=None):
     '''
     Add new foods to today's log
     '''
-    # not ideal code here... 
-    if len(database.get_stored_menu(location, meal, datetime.now)) == 0:
-        scrape_nutrition_daily()
-
     location = flask.request.args.get('location', None)
     meal = flask.request.args.get('meal', None)
 
@@ -175,7 +171,11 @@ def add_food(location=None, meal=None):
     if meal is None:
         return flask.render_template('selectMeal.html', location=location)
 
+    # not ideal code here...
     menu = database.get_stored_menu(location, meal, datetime.now())
+    if len(menu) == 0:
+        scrape_nutrition_daily()
+        
     form = AddFoodForm(flask.request.form)
     for _ in range(len(menu)):
         form.add_item()
