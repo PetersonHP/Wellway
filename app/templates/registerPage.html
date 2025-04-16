@@ -160,6 +160,11 @@
 
         <button type="submit" class="btn btn-primary">Register</button>
       </form>
+      <hr/>
+        <a href="{{ url_for('login_cas') }}" class="btn btn-secondary w-100 d-flex align-items-center justify-content-center gap-2">
+            Register via Princeton CAS
+            <img src="{{ url_for('static', filename='images/princeton_seal.svg') }}" width="20" height="20">
+          </a>
     </div>
 
     <!-- Bootstrap JS -->

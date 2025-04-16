@@ -1,0 +1,51 @@
+INFO:Wellway:Searching for DB at postgresql://wellway_db_user:ZCqrCMpozRHCUti2ezv1NEh8koMWkfiI@dpg-cvusb6je5dus73e0i9r0-a.ohio-postgres.render.com/wellway_db
+INFO:apscheduler.scheduler:Adding job tentatively -- it will be properly scheduled when the scheduler starts
+INFO:apscheduler.scheduler:Added job "scrape_nutrition_daily" to job store "default"
+INFO:apscheduler.scheduler:Scheduler started
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 684-485-325
+INFO:werkzeug:127.0.0.1 - - [16/Apr/2025 12:08:28] "[32mGET /login/cas HTTP/1.1[0m" 302 -
+INFO:werkzeug:127.0.0.1 - - [16/Apr/2025 12:08:30] "[32mGET /login/cas?ticket=ST-37565-5BvwGSM0Je2fFObeiCw83LGSF10-fed HTTP/1.1[0m" 302 -
+INFO:werkzeug:127.0.0.1 - - [16/Apr/2025 12:08:31] "GET /dashboard HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [16/Apr/2025 12:08:39] "[32mGET /signout HTTP/1.1[0m" 302 -
+INFO:werkzeug:127.0.0.1 - - [16/Apr/2025 12:08:39] "GET / HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [16/Apr/2025 12:09:25] "GET / HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [16/Apr/2025 12:09:41] "GET / HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [16/Apr/2025 12:09:50] "GET / HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [16/Apr/2025 12:14:18] "GET / HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [16/Apr/2025 12:14:18] "GET /static/images/princeton_seal.svg HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [16/Apr/2025 12:14:36] "GET / HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [16/Apr/2025 12:14:36] "[36mGET /static/images/princeton_seal.svg HTTP/1.1[0m" 304 -
+INFO:Wellway:CAS login success for hp7369
+
+INFO:werkzeug:127.0.0.1 - - [16/Apr/2025 12:14:40] "[32mGET /login/cas HTTP/1.1[0m" 302 -
+INFO:werkzeug:127.0.0.1 - - [16/Apr/2025 12:14:40] "GET /dashboard HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [16/Apr/2025 12:14:43] "[32mGET /signout HTTP/1.1[0m" 302 -
+INFO:werkzeug:127.0.0.1 - - [16/Apr/2025 12:14:44] "GET / HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [16/Apr/2025 12:14:44] "[36mGET /static/images/princeton_seal.svg HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [16/Apr/2025 12:14:45] "GET /register HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [16/Apr/2025 12:14:48] "GET /login HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [16/Apr/2025 12:14:48] "[36mGET /static/images/princeton_seal.svg HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [16/Apr/2025 12:14:52] "GET /register HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [16/Apr/2025 12:15:21] "GET / HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [16/Apr/2025 12:15:21] "[36mGET /static/images/princeton_seal.svg HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [16/Apr/2025 12:15:22] "GET /register HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [16/Apr/2025 12:15:22] "[36mGET /static/images/princeton_seal.svg HTTP/1.1[0m" 304 -
+INFO:Wellway:CAS login success for hp7369
+
+INFO:werkzeug:127.0.0.1 - - [16/Apr/2025 12:15:26] "[32mGET /login/cas HTTP/1.1[0m" 302 -
+INFO:werkzeug:127.0.0.1 - - [16/Apr/2025 12:15:26] "GET /dashboard HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [16/Apr/2025 12:15:29] "[32mGET /signout HTTP/1.1[0m" 302 -
+INFO:werkzeug:127.0.0.1 - - [16/Apr/2025 12:15:29] "GET / HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [16/Apr/2025 12:15:29] "[36mGET /static/images/princeton_seal.svg HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [16/Apr/2025 12:15:43] "GET / HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [16/Apr/2025 12:15:43] "GET /static/images/princeton_seal.svg HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [16/Apr/2025 12:15:44] "[32mGET /login/cas HTTP/1.1[0m" 302 -
+INFO:Wellway:CAS login success for hp7369
+
+INFO:werkzeug:127.0.0.1 - - [16/Apr/2025 12:16:17] "[32mGET /login/cas?ticket=ST-566903-GfIxqYwgjE5xAeb2TpmCpyLMvtA-fed HTTP/1.1[0m" 302 -
+INFO:werkzeug:127.0.0.1 - - [16/Apr/2025 12:16:17] "GET /dashboard HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [16/Apr/2025 12:16:23] "[32mGET /signout HTTP/1.1[0m" 302 -
+INFO:werkzeug:127.0.0.1 - - [16/Apr/2025 12:16:23] "GET / HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [16/Apr/2025 12:16:23] "[36mGET /static/images/princeton_seal.svg HTTP/1.1[0m" 304 -
+INFO:apscheduler.scheduler:Scheduler has been shut down

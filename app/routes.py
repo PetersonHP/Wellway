@@ -11,6 +11,7 @@ from common import DINING_HALLS, DHALL_ARGS, MEALS, log
 import database
 from database import User
 from forms import RegistrationForm, LoginForm, AddFoodForm, EditLogForm
+import princeton_cas
 import scraper
 
 from apscheduler.schedulers.background import BackgroundScheduler
@@ -180,12 +181,39 @@ def signout():
     return flask.redirect(flask.url_for('index'))
 
 
+@app.route('/login/cas')
+def login_cas():
+    '''
+    Handles Princeton CAS login and optional auto-registration
+    '''
+    cas_client = princeton_cas.CASClient()
+    username = cas_client.authenticate()  # Redirects if no ticket or invalid
+
+    user = database.get_user_by_name(username)
+    if user:
+        flask_login.login_user(user)
+        log.info('CAS login success for %s', username)
+        return flask.redirect(flask.url_for('dashboard'))
+
+    # Auto-register if not already in database
+    new_id = database.register_user(
+        username, f'{username}@princeton.edu', None, datetime.now())
+
+    if not new_id:
+        flask.flash('Account creation failed for CAS user.')
+        return flask.redirect(flask.url_for('index'))
+
+    flask_login.login_user(load_user(str(new_id)))
+    return flask.redirect(flask.url_for('dashboard'))
+
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     '''
     login as an existing user
     '''
     form = LoginForm(flask.request.form)
+
     if form.validate_on_submit():
         current_user = database.validate_user(
             form.username.data, form.password.data)

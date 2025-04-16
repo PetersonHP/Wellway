@@ -460,7 +460,7 @@ def register_user(username: str, email: str, password: str, timestamp: datetime)
         user_id=uuid.uuid4(),
         username=username,
         email=email,
-        password_hash=generate_password_hash(password),
+        password_hash=generate_password_hash(password) if password else None,
         created_at=timestamp,
     )
 
@@ -511,6 +511,21 @@ def get_user_by_id(user_id: str) -> User | None:
     with sqlalchemy.orm.Session(_engine) as session:
         try:
             result = session.get(User, user_uuid)
+            return result
+        except Exception:
+            # user not found
+            return None
+
+
+def get_user_by_name(username: str) -> User | None:
+    '''
+    Returns the User object corresponding to the provided username
+
+    Returns None if the user doesn't exist
+    '''
+    with sqlalchemy.orm.Session(_engine) as session:
+        try:
+            result = session.query(User).filter(User.username == username).first()
             return result
         except Exception:
             # user not found
@@ -658,7 +673,7 @@ def main():
     #     [('81dc6102-c473-4b6e-911d-81250518c845', 2)]
     # )
 
-    # print(food.get_summary())
+    print(get_user_by_name('PetersonHP').user_id)
 
 
 if __name__ == '__main__':
