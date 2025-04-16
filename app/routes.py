@@ -116,52 +116,58 @@ def full_report():
     return flask.render_template('fullReport.html', report=daily_report)
 
 
-@app.route('/fullLog', methods=['GET', 'POST'])
+@app.route('/viewEditLog', methods=['GET', 'POST'])
 @login_required
-def full_log():
+def view_edit_log():
     '''
     Displays and allows for editing of today's log
     '''
     current_log = database.get_create_food_log(
         flask_login.current_user, datetime.now())
 
-    if not current_log:
-        flask.flash("No food log found for today.")
-        return flask.redirect(flask.url_for('dashboard'))
-
     entries = current_log.get_full_log()
-    form = EditLogForm()
 
-    # Dynamically add a checkbox for each recipe
-    form.populate_entries(entries)
+    form = EditLogForm(flask.request.form)
+
+    for entry in entries:
+        form.add_item(entry[1])
+    recipes_with_log = zip(form.recipes, entries)
 
     if form.validate_on_submit():
-        to_delete = form.get_selected_ids()
-        for recipe_id in to_delete:
-            current_log.remove_recipe_by_id(recipe_id)
-        flask.flash("Food log updated successfully.")
-        return flask.redirect(flask.url_for('full_log'))
+        for recipe_form, _ in recipes_with_log:
+            if recipe_form.selected.data:
+                current_log.remove_recipe_by_id(recipe_form.recipe_id.data)
+
+        return flask.redirect(flask.url_for('dashboard'))
 
     # Organize entries by meal for display, matching with indexed form field
     meals = ['breakfast', 'lunch', 'dinner', 'snacks']
     meal_items = {meal: [] for meal in meals}
 
-    for entry, field in zip(entries, form.recipes):
+    for field, entry in recipes_with_log:
         meal = entry[0]
         recipe_id = entry[1]
         recipe_name = entry[2]
         portion_info = entry[3]
         qty = entry[4]
+        cals = entry[5]
+        protein = entry[6]
+        fat = entry[7]
+        carbs = entry[8]
 
         meal_items[meal].append({
             'id': recipe_id,
             'recipe_name': recipe_name,
             'portion_info': portion_info,
             'qty': qty,
+            'cals': cals,
+            'protein': protein,
+            'fat': fat,
+            'carbs': carbs,
             'field': field
         })
 
-    return flask.render_template('fullLog.html', form=form, meal_items=meal_items)
+    return flask.render_template('viewEditLog.html', form=form, meal_items=meal_items)
 
 
 @app.route('/signout', methods=['GET'])
@@ -261,15 +267,6 @@ def add_food(location=None, meal=None):
     )
 
 
-@app.route('/viewEditLog/', methods=['GET', 'POST'])
-@login_required
-def view_edit_log():
-    '''
-    View or edit the food log for today
-    '''
-    return flask.render_template('viewEditLog.html')
-
-
 @app.route('/deleteLog', methods=['POST'])
 @login_required
 def delete_log():
@@ -292,31 +289,6 @@ def coming_soon():
 #     # TODO: implement
 #     form = ForgotPasswordForm(flask.request.form)
 #     return flask.render_template('forgot.html', form=form)
-
-
-# @app.route('/getReport', methods=['POST'])
-# def get_report():
-#     '''
-#     displays the nutrition report for the requested meal
-#     '''
-#     try:
-#         location = flask.request.form.get('location')
-#         meal = flask.request.form.get('meal')
-#         todays_date = datetime.today()
-
-#         nut_rpt = scraper.get_meal_info(location, meal, todays_date)
-
-#         rendered = flask.render_template(
-#             'report.html',
-#             content=nut_rpt.to_html(
-#                 classes="table table-striped", index=False),
-#             location=DHALL_ARGS[location][1],
-#             meal=meal
-#         )
-#         return flask.make_response(rendered)
-#     except Exception as ex:
-#         print(sys.argv[0] + ": " + str(ex), file=sys.stderr)
-#         return 'Internal server error occurred. Please contact the site admin.'
 
 
 def main():

@@ -79,34 +79,43 @@ class AddFoodForm(FlaskForm):
         self.items.append_entry()
 
 
-class SingleRecipeForm(FlaskForm):
+class EditLogFormItem(FlaskForm):
     '''
-    single recipe in a nutrition log
+    single recipe in a nutrition log to edit
     '''
-    recipe_id = HiddenField(validators=[val.DataRequired()])
+
+    class Meta:
+        csrf = False
+
+    recipe_id = HiddenField(val.DataRequired())
     selected = BooleanField()
 
 
 class EditLogForm(FlaskForm):
-    recipes = FieldList(FormField(SingleRecipeForm), min_entries=0)
-    submit = SubmitField('Save Changes')
+    '''
+    form to remove foods from log
+    '''
+    recipes = FieldList(FormField(EditLogFormItem), min_entries=0)
 
-    def populate_entries(self, entries):
+    def add_item(self, id):
         '''
-        populates the form with recipe entries
+        Add recipe item to form
         '''
-        self.recipes.entries = []
-        for _, recipe_id, *_ in entries:
-            form = SingleRecipeForm()
-            form.recipe_id.data = recipe_id
-            self.recipes.append_entry(form)
+        new_entry = self.recipes.append_entry()
+        new_entry.recipe_id.data = id
 
-    def get_selected_ids(self):
-        '''
-        gets the recipe ids for all displayed recipes
-        '''
-        return [
-            entry.recipe_id.data
-            for entry in self.recipes
-            if entry.selected.data
-        ]
+    # def get_selected_ids(self):
+    #     '''
+    #     gets the recipe ids for all displayed recipes
+    #     '''
+
+    #     # DEBUG
+    #     # print(f'FOUND: {[entry.form.recipe_id.data for entry in self.recipes 
+    #     # if entry.form.selected.data]}')
+    #     print(self.recipes[0].form.selected.data)
+
+    #     return [
+    #         entry.form.recipe_id.data
+    #         for entry in self.recipes
+    #         if entry.form.selected.data
+    #     ]

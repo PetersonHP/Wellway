@@ -1,0 +1,11 @@
+INFO:Wellway:Searching for DB at postgresql://wellway_db_user:ZCqrCMpozRHCUti2ezv1NEh8koMWkfiI@dpg-cvusb6je5dus73e0i9r0-a.ohio-postgres.render.com/wellway_db
+INFO:apscheduler.scheduler:Adding job tentatively -- it will be properly scheduled when the scheduler starts
+INFO:apscheduler.scheduler:Added job "scrape_nutrition_daily" to job store "default"
+INFO:apscheduler.scheduler:Scheduler started
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 684-485-325
+INFO:werkzeug:127.0.0.1 - - [16/Apr/2025 10:50:18] "GET /viewEditLog HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [16/Apr/2025 10:50:20] "[32mPOST /viewEditLog HTTP/1.1[0m" 302 -
+INFO:werkzeug:127.0.0.1 - - [16/Apr/2025 10:50:20] "GET /dashboard HTTP/1.1" 200 -
+INFO:werkzeug: * Detected change in 'C:\\Users\\Peter\\Source\\Wellway\\app\\routes.py', reloading
+INFO:apscheduler.scheduler:Scheduler has been shut down

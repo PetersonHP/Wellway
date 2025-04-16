@@ -1,0 +1,24 @@
+INFO:Wellway:Searching for DB at postgresql://wellway_db_user:ZCqrCMpozRHCUti2ezv1NEh8koMWkfiI@dpg-cvusb6je5dus73e0i9r0-a.ohio-postgres.render.com/wellway_db
+INFO:apscheduler.scheduler:Adding job tentatively -- it will be properly scheduled when the scheduler starts
+INFO:apscheduler.scheduler:Added job "scrape_nutrition_daily" to job store "default"
+INFO:apscheduler.scheduler:Scheduler started
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 684-485-325
+INFO:werkzeug:127.0.0.1 - - [16/Apr/2025 10:29:57] "GET /addFood/ HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [16/Apr/2025 10:29:57] "[36mGET /static/images/yeh.jpg HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [16/Apr/2025 10:29:57] "[36mGET /static/images/roma.jpg HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [16/Apr/2025 10:29:57] "[36mGET /static/images/forbes.jpg HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [16/Apr/2025 10:29:57] "[36mGET /static/images/whitman.jpg HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [16/Apr/2025 10:29:57] "[36mGET /static/images/cjl.jpg HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [16/Apr/2025 10:29:57] "[36mGET /static/images/gradcollege.jpg HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [16/Apr/2025 10:29:57] "GET /addFood/?location=roma HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [16/Apr/2025 10:29:58] "GET /addFood/?location=roma&meal=Lunch HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [16/Apr/2025 10:30:03] "[32mPOST /addFood/?location=roma&meal=Lunch HTTP/1.1[0m" 302 -
+INFO:werkzeug:127.0.0.1 - - [16/Apr/2025 10:30:04] "GET /dashboard HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [16/Apr/2025 10:30:06] "GET /viewEditLog HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [16/Apr/2025 10:30:08] "GET /dashboard HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [16/Apr/2025 10:30:10] "GET /viewEditLog HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [16/Apr/2025 10:30:13] "[32mPOST /viewEditLog HTTP/1.1[0m" 302 -
+INFO:werkzeug:127.0.0.1 - - [16/Apr/2025 10:30:14] "GET /dashboard HTTP/1.1" 200 -
+INFO:werkzeug: * Detected change in 'C:\\Users\\Peter\\Source\\Wellway\\app\\forms.py', reloading
+INFO:apscheduler.scheduler:Scheduler has been shut down
