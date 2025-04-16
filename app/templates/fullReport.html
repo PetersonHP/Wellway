@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Full Nutrition Report</title>
+
+    <!-- Bootstrap CSS -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+
+    <style>
+      body {
+        background-color: #121212;
+        color: #f1f1f1;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        padding: 2rem 1rem;
+      }
+
+      .container-custom {
+        max-width: 600px;
+        margin: 0 auto;
+        background-color: #1e1e1e;
+        padding: 2rem;
+        border-radius: 16px;
+        box-shadow: 0 0 20px rgba(255, 255, 255, 0.05);
+      }
+
+      h1, h3 {
+        text-align: center;
+        color: #ffffff;
+      }
+
+      .table-dark-custom {
+        background-color: #2a2a2a;
+        color: #ffffff;
+      }
+
+      .btn-group-custom {
+        display: flex;
+        justify-content: center;
+        margin-top: 2rem;
+      }
+
+      .btn-outline-light {
+        border-color: #ffffff;
+        color: #ffffff;
+      }
+
+      .btn-outline-light:hover {
+        background-color: #ffffff;
+        color: #121212;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="container-custom">
+      <h1>Full Nutrition Report</h1>
+      <h3 class="mt-3 mb-4">Today's Detailed Breakdown</h3>
+
+      <table class="table table-bordered table-dark table-dark-custom">
+        <tbody>
+          <tr><th>Total Calories</th><td>{{ report['total_calories'] }}</td></tr>
+          <tr><th>Protein</th><td>{{ report['grams_protein'] }} g ({{ "%.1f"|format(report['percent_protein'] * 100) }}%)</td></tr>
+          <tr><th>Fat</th><td>{{ report['grams_fat'] }} g ({{ "%.1f"|format(report['percent_fat'] * 100) }}%)</td></tr>
+          <tr><th>Carbs</th><td>{{ report['grams_carbs'] }} g ({{ "%.1f"|format(report['percent_carbs'] * 100) }}%)</td></tr>
+          <tr><th>Fiber</th><td>{{ report['grams_fiber'] }} g</td></tr>
+          <tr><th>Sugar</th><td>{{ report['grams_sugar'] }} g</td></tr>
+          <tr><th>Cholesterol</th><td>{{ report['mg_cholesterol'] }} mg</td></tr>
+          <tr><th>Sodium</th><td>{{ report['mg_sodium'] }} mg</td></tr>
+          <tr><th>Potassium</th><td>{{ report['mg_potassium'] }} mg</td></tr>
+          <tr><th>Vitamin A</th><td>{{ report['iu_vitamin_a'] }} IU</td></tr>
+          <tr><th>Vitamin B</th><td>{{ report['mg_vitamin_b'] }} mg</td></tr>
+        </tbody>
+      </table>
+
+      <div class="btn-group-custom">
+        <a href="{{ url_for('dashboard') }}" class="btn btn-outline-light">Back to Dashboard</a>
+      </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  </body>
+</html>

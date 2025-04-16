@@ -30,7 +30,7 @@ if LOCAL_DB:
     _DATABASE_URL = os.environ['INTERNAL_DB_URL']
 else:
     _DATABASE_URL = os.environ['EXTERNAL_DB_URL']
-    
+
 
 log.info('Searching for DB at %s', _DATABASE_URL)
 
@@ -154,9 +154,11 @@ class FoodLog(Base):
                         qty = report_tuple[1]
 
                         if report.calories is not None:
-                            result['total_calories'] += int(report.calories) * qty
+                            result['total_calories'] += int(
+                                report.calories) * qty
                         if report.protein is not None:
-                            result['grams_protein'] += int(report.protein) * qty
+                            result['grams_protein'] += int(
+                                report.protein) * qty
                         if report.fat is not None:
                             result['grams_fat'] += int(report.fat) * qty
                         if report.carbs is not None:
@@ -177,11 +179,204 @@ class FoodLog(Base):
             except Exception as e:
                 raise e
 
-    def get_full_report(self):
+    def get_full_report(self) -> dict:
         '''
-        Returns the full report of all nutritional information for this log
+        Returns a full nutrition report dict structured as follows:
+
+        {
+            'total_calories': int,
+
+            'grams_protein': int,
+            'grams_fat': int,
+            'grams_carbs': int,
+
+            'grams_fiber': int,
+            'mg_potassium': int,
+            'mg_cholesterol': int,
+            'grams_sugar': int,
+            'mg_sodium': int,
+            'iu_vitamin_a': int,
+            'mg_vitamin_b': int,
+
+            'percent_protein': float,
+            'percent_fat': float,
+            'percent_carbs': float
+        }
         '''
-        # TODO: implement
+        result = {
+            'total_calories': 0,
+            'grams_protein': 0,
+            'grams_fat': 0,
+            'grams_carbs': 0,
+            'grams_fiber': 0,
+            'mg_potassium': 0,
+            'mg_cholesterol': 0,
+            'grams_sugar': 0,
+            'mg_sodium': 0,
+            'iu_vitamin_a': 0,
+            'mg_vitamin_b': 0,
+
+            'percent_protein': 0.0,
+            'percent_fat': 0.0,
+            'percent_carbs': 0.0
+        }
+
+        this_log = json.loads(self.log)
+        with sqlalchemy.orm.Session(_engine) as session:
+            try:
+                for _, recipes in this_log['meals'].items():
+                    for report_tuple in recipes:
+                        report = session.get(RecipeReport, report_tuple[0])
+                        qty = report_tuple[1]
+
+                        if report.calories is not None:
+                            result['total_calories'] += int(
+                                report.calories) * qty
+                        if report.protein is not None:
+                            result['grams_protein'] += int(
+                                report.protein) * qty
+                        if report.fat is not None:
+                            result['grams_fat'] += int(report.fat) * qty
+                        if report.carbs is not None:
+                            result['grams_carbs'] += int(report.carbs) * qty
+                        if report.fiber is not None:
+                            result['grams_fiber'] += int(report.fiber) * qty
+                        if report.potassium is not None:
+                            result['mg_potassium'] += int(
+                                report.potassium) * qty
+                        if report.cholesterol is not None:
+                            result['mg_cholesterol'] += int(
+                                report.cholesterol) * qty
+                        if report.sugar is not None:
+                            result['grams_sugar'] += int(report.sugar) * qty
+                        if report.sodium is not None:
+                            result['mg_sodium'] += int(report.sodium) * qty
+                        if report.vitamin_a is not None:
+                            result['iu_vitamin_a'] += int(
+                                report.vitamin_a) * qty
+                        if report.vitamin_b is not None:
+                            result['mg_vitamin_b'] += int(
+                                report.vitamin_b) * qty
+
+                if result['total_calories'] > 0:
+                    result['percent_protein'] = (
+                        result['grams_protein'] *
+                        self.CALS_PER_GRAM['protein'] /
+                        result['total_calories']
+                    )
+                    result['percent_fat'] = (
+                        result['grams_fat'] * self.CALS_PER_GRAM['fat'] /
+                        result['total_calories']
+                    )
+                    result['percent_carbs'] = (
+                        result['grams_carbs'] * self.CALS_PER_GRAM['carbs'] /
+                        result['total_calories']
+                    )
+
+                return result
+
+            except Exception as e:
+                raise e
+
+    def get_full_log(self) -> list[tuple]:
+        '''
+        Returns a list of tuples, grouped and ordered by meal (breakfast → snacks).
+        Each tuple represents a menu item in the log with detailed nutrition info:
+
+        [
+            (
+                meal: str,
+                report_id: str,
+                recipe_name: str,
+                portion_info: str,
+                quantity: int,
+
+                calories: float,
+                protein: float,
+                fat: float,
+                carbs: float,
+
+                percent_protein: float,
+                percent_fat: float,
+                percent_carbs: float
+            ),
+            ...
+        ]
+        '''
+        report_items = []
+        ordered_meals = ['breakfast', 'lunch', 'dinner', 'snacks']
+
+        this_log = json.loads(self.log)
+        with sqlalchemy.orm.Session(_engine) as session:
+            try:
+                for meal in ordered_meals:
+                    recipes = this_log['meals'].get(meal, [])
+                    for report_id, qty in recipes:
+                        report = session.get(RecipeReport, report_id)
+                        if not report:
+                            continue
+
+                        calories = (report.calories or 0) * qty
+                        protein = (report.protein or 0) * qty
+                        fat = (report.fat or 0) * qty
+                        carbs = (report.carbs or 0) * qty
+
+                        percent_protein = percent_fat = percent_carbs = 0.0
+                        if calories > 0:
+                            percent_protein = (
+                                protein * self.CALS_PER_GRAM['protein']) / calories
+                            percent_fat = (
+                                fat * self.CALS_PER_GRAM['fat']) / calories
+                            percent_carbs = (
+                                carbs * self.CALS_PER_GRAM['carbs']) / calories
+
+                        report_items.append((
+                            meal,
+                            report_id,
+                            report.recipe_name,
+                            report.portion_info,
+                            qty,
+
+                            round(calories, 2),
+                            round(protein, 2),
+                            round(fat, 2),
+                            round(carbs, 2),
+
+                            round(percent_protein, 4),
+                            round(percent_fat, 4),
+                            round(percent_carbs, 4)
+                        ))
+
+                return report_items
+
+            except Exception as e:
+                raise e
+
+    def remove_recipe_by_id(self, recipe_id: str) -> None:
+        '''
+        Removes a recipe (by UUID string) from the food log and commits the change.
+        Does nothing if the recipe is not found. Handles the session internally.
+        '''
+        try:
+            this_log = json.loads(self.log)
+            modified = False
+
+            for meal, recipes in this_log['meals'].items():
+                new_recipes = [
+                    (rid, qty) for (rid, qty) in recipes if rid != recipe_id
+                ]
+                if len(new_recipes) != len(recipes):
+                    modified = True
+                this_log['meals'][meal] = new_recipes
+
+            if modified:
+                self.log = json.dumps(this_log)
+                with sqlalchemy.orm.Session(_engine) as session:
+                    session.merge(self)
+                    session.commit()
+
+        except Exception as e:
+            raise e
 
 
 def store_nut_rpt(location: str, meal: str, date: datetime, report: pd.DataFrame) -> None:

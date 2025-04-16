@@ -3,8 +3,9 @@ Forms related to user registration and login
 '''
 
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SelectField, \
-    IntegerField, FieldList, FormField
+from wtforms import StringField, PasswordField, \
+    IntegerField, FieldList, FormField, SubmitField, BooleanField, \
+    HiddenField
 from wtforms import validators as val
 
 
@@ -76,3 +77,36 @@ class AddFoodForm(FlaskForm):
         Add recipe item to form
         '''
         self.items.append_entry()
+
+
+class SingleRecipeForm(FlaskForm):
+    '''
+    single recipe in a nutrition log
+    '''
+    recipe_id = HiddenField(validators=[val.DataRequired()])
+    selected = BooleanField()
+
+
+class EditLogForm(FlaskForm):
+    recipes = FieldList(FormField(SingleRecipeForm), min_entries=0)
+    submit = SubmitField('Save Changes')
+
+    def populate_entries(self, entries):
+        '''
+        populates the form with recipe entries
+        '''
+        self.recipes.entries = []
+        for _, recipe_id, *_ in entries:
+            form = SingleRecipeForm()
+            form.recipe_id.data = recipe_id
+            self.recipes.append_entry(form)
+
+    def get_selected_ids(self):
+        '''
+        gets the recipe ids for all displayed recipes
+        '''
+        return [
+            entry.recipe_id.data
+            for entry in self.recipes
+            if entry.selected.data
+        ]

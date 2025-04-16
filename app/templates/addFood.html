@@ -133,7 +133,7 @@
 
       <p class="text-center mt-4">
         <strong>Note:</strong> A standard Campus Dining serving spoon holds
-        around 4 oz of food. <br>
+        around 3-4 oz of food. That much would take up about the size of the palm of your hand on a plate.<br>
         <strong style="color:#28a745">If your food is not here, the option to add additional food is coming soon.</strong>
       </p>
 
@@ -146,28 +146,30 @@
 
         <div class="table-responsive">
           <table class="table table-borderless align-middle text-light">
-            <thead>
+            <thead class="table-dark">
               <tr>
                 <th>Menu Item and Serving Size</th>
                 <th>Quantity</th>
               </tr>
             </thead>
-            <tbody>
+            <tbody class="table-light">
               {% for item_form, menu_item in items_with_menu %}
               <tr>
                 <td>
-                  <label class="form-label">{{ menu_item[1] }}</label>
-                  <div class="text-muted small">{{ menu_item[2] }}</div>
+                  <label class="form-label mb-0 fw-semibold">{{ menu_item[1] }}</label>
+                  <div class="form-text text-muted">{{ menu_item[2] }}</div>
                 </td>
                 <td>
-                  {{ item_form.quantity(class="form-control") }}
-                  {% if item_form.quantity.errors %}
-                  <ul class="text-danger mt-1 mb-0 small">
-                    {% for error in item_form.quantity.errors %}
-                    <li>{{ error }}</li>
-                    {% endfor %}
-                  </ul>
-                  {% endif %}
+                  <div class="form-group">
+                    {{ item_form.quantity(class="form-control") }}
+                    {% if item_form.quantity.errors %}
+                    <div class="text-danger mt-1 small">
+                      {% for error in item_form.quantity.errors %}
+                      <div>{{ error }}</div>
+                      {% endfor %}
+                    </div>
+                    {% endif %}
+                  </div>
                 </td>
               </tr>
               {% endfor %}

@@ -10,7 +10,7 @@ import os
 from common import DINING_HALLS, DHALL_ARGS, MEALS, log
 import database
 from database import User
-from forms import RegistrationForm, LoginForm, AddFoodForm
+from forms import RegistrationForm, LoginForm, AddFoodForm, EditLogForm
 import scraper
 
 from apscheduler.schedulers.background import BackgroundScheduler
@@ -81,22 +81,87 @@ def load_user(user_id: str) -> User | None:
 @app.route('/', methods=['GET'])
 def index():
     '''
-    displays the home screen for the app
+    displays the login screen if the user is not authenticated and the dashboard if they are
     '''
+    if flask_login.current_user.is_authenticated:
+        return flask.redirect(flask.url_for('dashboard'))
+
     return flask.make_response(flask.render_template('index.html'))
 
 
 @app.route('/dashboard', methods=['GET'])
-@login_required
 def dashboard():
     '''
     dashboard home screen for a user
     '''
+    if not flask_login.current_user.is_authenticated:
+        return flask.redirect(flask.url_for('index'))
+
     current_log = database.get_create_food_log(
         flask_login.current_user, datetime.now())
     daily_summary = current_log.get_summary()
 
     return flask.render_template('dashboard.html', daily_summary=daily_summary)
+
+
+@app.route('/fullReport')
+@login_required
+def full_report():
+    '''
+    full nutritional report screen for a user
+    '''
+    current_log = database.get_create_food_log(
+        flask_login.current_user, datetime.now())
+    daily_report = current_log.get_full_report()
+    return flask.render_template('fullReport.html', report=daily_report)
+
+
+@app.route('/fullLog', methods=['GET', 'POST'])
+@login_required
+def full_log():
+    '''
+    Displays and allows for editing of today's log
+    '''
+    current_log = database.get_create_food_log(
+        flask_login.current_user, datetime.now())
+
+    if not current_log:
+        flask.flash("No food log found for today.")
+        return flask.redirect(flask.url_for('dashboard'))
+
+    entries = current_log.get_full_log()
+    form = EditLogForm()
+
+    # Dynamically add a checkbox for each recipe
+    form.populate_entries(entries)
+
+    if form.validate_on_submit():
+        to_delete = form.get_selected_ids()
+        for recipe_id in to_delete:
+            current_log.remove_recipe_by_id(recipe_id)
+        flask.flash("Food log updated successfully.")
+        return flask.redirect(flask.url_for('full_log'))
+
+    # Organize entries by meal for display, matching with indexed form field
+    meals = ['breakfast', 'lunch', 'dinner', 'snacks']
+    meal_items = {meal: [] for meal in meals}
+
+    for entry, field in zip(entries, form.recipes):
+        meal = entry[0]
+        recipe_id = entry[1]
+        recipe_name = entry[2]
+        portion_info = entry[3]
+        qty = entry[4]
+
+        meal_items[meal].append({
+            'id': recipe_id,
+            'recipe_name': recipe_name,
+            'portion_info': portion_info,
+            'qty': qty,
+            'field': field
+        })
+
+    return flask.render_template('fullLog.html', form=form, meal_items=meal_items)
 
 
 @app.route('/signout', methods=['GET'])
@@ -171,11 +236,8 @@ def add_food(location=None, meal=None):
     if meal is None:
         return flask.render_template('selectMeal.html', location=location)
 
-    # not ideal code here...
     menu = database.get_stored_menu(location, meal, datetime.now())
-    if len(menu) == 0:
-        scrape_nutrition_daily()
-        
+
     form = AddFoodForm(flask.request.form)
     for _ in range(len(menu)):
         form.add_item()
